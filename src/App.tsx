@@ -10,8 +10,9 @@ import Router from './Router';
 const customStyle = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#000000',
       contrastText: 'white',
+      
     },
   },
   typography: {
