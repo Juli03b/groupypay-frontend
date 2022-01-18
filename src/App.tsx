@@ -11,8 +11,7 @@ const customStyle = createTheme({
   palette: {
     primary: {
       main: '#000000',
-      contrastText: 'white',
-      
+      contrastText: 'white'
     },
   },
   typography: {
@@ -25,7 +24,9 @@ const App: FC = () => {
     <ThemeProvider theme={customStyle}>
       <CssBaseline enableColorScheme />
         <Nav />
-        <Router />
+          <Router />
+
+
     </ThemeProvider>
   );
 }
