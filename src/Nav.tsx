@@ -1,9 +1,10 @@
-import { FC } from "react";
-import { Container, Navbar, NavDropdown, Nav } from "react-bootstrap";
+import { FC, useContext } from "react";
+import { Container, Navbar, Nav } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
+import AppContext from "./AppContext";
 
 const Navigation: FC = () => {
-    const isAuth: boolean = false;
+    const { user, signOut } = useContext(AppContext);
     return (
         <Navbar bg="dark" expand="lg" variant="dark">
             <Container>
@@ -11,10 +12,11 @@ const Navigation: FC = () => {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                {!isAuth && <Nav.Link href="/">Home</Nav.Link>}
-                {!isAuth && <Nav.Link href="/sign-up">Sign Up</Nav.Link>}
-                {!isAuth && <Nav.Link href="/sign-in">Sign In</Nav.Link>}
-                {isAuth && <Nav.Link href="/dashboard">Dashboard</Nav.Link>}
+                {!user && <Nav.Link href="/">Home</Nav.Link>}
+                {!user && <Nav.Link href="/sign-up">Sign Up</Nav.Link>}
+                {!user && <Nav.Link href="/sign-in">Sign In</Nav.Link>}
+                {user && <Nav.Link href="/dashboard">Dashboard</Nav.Link>}
+                {user && <Nav.Link href="/" onClick={() => signOut()} >Sign Out</Nav.Link>}
                 {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
                     <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
                     <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
