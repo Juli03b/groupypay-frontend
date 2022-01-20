@@ -2,10 +2,12 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import { createTheme, CssBaseline, ThemeProvider } from '@mui/material';
+import { colors, Container, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import { FC } from 'react';
-import Nav from './Nav';
+import Navigation from './Nav';
 import Router from './Router';
+import { makeStyles } from '@mui/styles';
+import { SnackbarProvider } from 'notistack';
 
 const customStyle = createTheme({
   palette: {
@@ -15,18 +17,34 @@ const customStyle = createTheme({
     },
   },
   typography: {
-    fontSize: 20
+    fontSize: 15
   }
 });
-
+const useStyles = makeStyles({
+  warning: {
+    backgroundColor: colors.yellow[500],
+  },
+  info: {
+    background: colors.blue[900]
+  }
+});
 const App: FC = () => {
+  const classes = useStyles()
   return (
     <ThemeProvider theme={customStyle}>
       <CssBaseline enableColorScheme />
-        <Nav />
-          <Router />
-
-
+        <SnackbarProvider 
+          classes={{
+            variantWarning: classes.warning,
+            variantInfo: classes.info,
+          }}
+          maxSnack={1}
+        >
+          <Navigation />
+          <Container>
+            <Router />
+          </Container>
+        </SnackbarProvider>
     </ThemeProvider>
   );
 }
