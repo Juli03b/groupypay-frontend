@@ -20,8 +20,8 @@ const Home: FC = () => {
             </Grid>
             <Grid item xs={12} xl={4}>
             <Box textAlign={"center"}>
-                <StyledHeader variant="h3"><b>Organize and divvy up group payments quickly</b></StyledHeader>
-                    <Button color="primary" variant="contained">Get started now</Button>
+                <StyledHeader variant="h3">Organize and divvy up group payments quickly</StyledHeader>
+                    <Button color="primary" variant="contained" href="/sign-up">Get started now</Button>
                 </Box>
             </Grid>
         </Grid>
