@@ -106,7 +106,7 @@ const Form: FC<FormProps> = (props: FormProps) => {
                                 onChange={formik.handleChange}
                                 id="name-input"
                                 label="Name"
-                                name="Name"
+                                name="name"
                                 type="name"
                                 variant="outlined"
                                 fullWidth
