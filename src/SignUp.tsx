@@ -1,6 +1,7 @@
 import { Container } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { FC } from "react";
+import { FC, useContext } from "react";
+import AppContext from "./AppContext";
 import Form from "./Form";
 
 const useStyles = makeStyles({
@@ -17,13 +18,13 @@ const useStyles = makeStyles({
     }
 });
 const SignUp: FC = () => {
-    // const { signUp } = useContext(AppContext);
+    const { signUp } = useContext(AppContext);
     const classes = useStyles();
 
     return (
         <Container maxWidth="md" className={classes.container}>
             <p>Sign in</p>
-            <Form password name phoneNumber email signUp buttonText="Sign up" mode="signUp" onSubmit={() => console.log("signed")} />
+            <Form password name phoneNumber email signUp buttonText="Sign up" mode="signUp" onSubmit={(signUp)} />
         </Container>);
 }
 
