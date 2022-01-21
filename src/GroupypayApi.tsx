@@ -44,17 +44,26 @@ export default class GroupypayApi {
     return response
   }
   static async patchUser(email: string, user: UserPatchProps) {
+
     const response: AxiosResponse = await this.request(`/users/${email}`, user, "POST");
     console.log("data from patchUser", response.data)
     return response.data
   }
-  static async getUser({ email }: {email: string}) {
-    const response: AxiosResponse = await this.request("/auth/token", {email}, "POST");
+  static async getUser(email: string) {
+    // Get a user using their email
+    const response: AxiosResponse = await this.request(`/users/${email}`);
     console.log("data from getUser", response.data)
     return response.data
   }
-  static async makeGroup({ name, description }: GroupProps) {
-    const response: AxiosResponse = await this.request("/auth/token", {name, description}, "POST");
+  static async getUserGroups(email: string) {
+    // Get a user's groups
+    const response: AxiosResponse = await this.request(`/users/${email}/groups`);
+    console.log("data from getUser", response.data)
+    return response.data
+  }
+  static async makeGroup(email: string, group: GroupProps) {
+    // Make a group for a user
+    const response: AxiosResponse = await this.request(`/users/${email}/groups`, group, "POST");
     console.log("data from makeGroup", response.data)
     return response.data
   }
