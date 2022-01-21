@@ -1,7 +1,7 @@
-import { Dashboard } from "@mui/icons-material";
 import { FC, useContext } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import AppContext from "./AppContext";
+import Dashboard from "./Dashboard";
 import Home from "./Home";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
