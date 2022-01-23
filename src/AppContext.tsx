@@ -9,6 +9,7 @@ interface AppContextProps {
     signUp: Function;
     signOut: Function;
     patchUser: Function;
+    makeGroup: Function;
 }
 
 export default createContext<AppContextProps>({
@@ -17,5 +18,7 @@ export default createContext<AppContextProps>({
     signIn: Function,
     signUp: Function,
     signOut: Function,
-    patchUser: Function
+    patchUser: Function,
+    makeGroup: Function,
+
 });
