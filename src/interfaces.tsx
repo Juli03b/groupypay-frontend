@@ -19,7 +19,18 @@ export interface UserTokenProps {
     email: string,
     phoneNumber?: string,
 }
+export interface MemberProps {
+    name: string,
+    email: string,
+    phoneNumber: string
+}
 export interface GroupProps {
+    id: number,
+    name: string,
+    description: string,
+    members: any
+}
+export interface GroupCreateProps {
     name: string,
     description: string,
 }
