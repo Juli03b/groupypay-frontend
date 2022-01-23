@@ -9,10 +9,11 @@ import Router from './Router';
 import { makeStyles } from '@mui/styles';
 import { SnackbarProvider } from 'notistack';
 import AppContext from './AppContext';
-import { UserCreateProps, UserPatchProps, UserSignInProps, UserTokenProps } from './interfaces';
+import { GroupCreateProps, UserCreateProps, UserPatchProps, UserSignInProps, UserTokenProps } from './interfaces';
 import GroupypayApi from './GroupypayApi';
 import { useNavigate } from 'react-router-dom';
 import jwtDecode from "jwt-decode";
+import { ContactMail } from '@mui/icons-material';
 
 const setLocalStorageToken = (token: string): void => localStorage.setItem("token", JSON.stringify(token));
 
@@ -46,11 +47,12 @@ const App: FC = () => {
     setTokenState(GroupypayApi.token || undefined)
     if (token) {
       const {sub}: {sub: any} = jwtDecode(token)
+
       setUser(sub);
     };
 
   }, [token]);
-  console.log(token)
+
   const setToken = (token: any) => {
     setTokenState(token);
     GroupypayApi.token = token;
@@ -117,8 +119,23 @@ const App: FC = () => {
       }
     }
   }
+
+  // Create group
+  const makeGroup = async (groupFromForm: GroupCreateProps) => {
+    if (!user) return;
+    try{
+      console.log(groupFromForm)
+      const group = await GroupypayApi.makeGroup(user?.email, groupFromForm);
+      return group;
+
+    }catch(msg){
+      console.log("msg", msg)
+      
+    }
+  }
+
   return (
-    <AppContext.Provider value={{user, signUp, signIn, patchUser, signOut}}>
+    <AppContext.Provider value={{user, signUp, signIn, patchUser, signOut, makeGroup}}>
       <ThemeProvider theme={customStyle}>
         <CssBaseline enableColorScheme />
           <SnackbarProvider 
