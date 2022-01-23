@@ -1,5 +1,5 @@
 import axios, { AxiosRequestHeaders, AxiosResponse, Method } from "axios";
-import { GroupProps, UserCreateProps, UserPatchProps, UserSignInProps } from "./interfaces";
+import { GroupCreateProps, GroupProps, UserCreateProps, UserPatchProps, UserSignInProps } from "./interfaces";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://127.0.0.1:5000";
 
@@ -27,7 +27,7 @@ export default class GroupypayApi {
       return (await axios({ url, method, data, params, headers })).data;
     } catch (err: any) {
       console.error("API Error:", err.response);
-      let message: string = errorByPGCode[err.response.data.error.pgcode];
+      let message: string = err.response.data.error.pgcode ? errorByPGCode[err.response.data.error.pgcode] : err.response.data.error.message;
       throw Array.isArray(message) ? message : [message];
     }
   }
@@ -57,15 +57,18 @@ export default class GroupypayApi {
   }
   static async getUserGroups(email: string) {
     // Get a user's groups
-    const response: AxiosResponse = await this.request(`/users/${email}/groups`);
-    console.log("data from getUser", response.data)
-    return response.data
+    const response = await this.request(`/users/${email}/groups`);
+    return response
   }
-  static async makeGroup(email: string, group: GroupProps) {
+  static async makeGroup(email: string, group: GroupCreateProps) {
     // Make a group for a user
     const response: AxiosResponse = await this.request(`/users/${email}/groups`, group, "POST");
-    console.log("data from makeGroup", response.data)
-    return response.data
+    return response
+  }
+  static async getGroup(id: string) {
+    // Get a group using an id
+    const response = await this.request(`/groups/${id}`);
+    return response
   }
 }
 
