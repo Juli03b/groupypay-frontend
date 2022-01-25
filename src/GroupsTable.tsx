@@ -48,7 +48,7 @@ const GroupsTable = ({groups, email}: {groups: GroupProps[], email: string}) => 
     useEffect(() => {
         const rows = []
         for (let group of groups) {
-            rows.push(createData(group.name, group.members || 0, group.description, group.id))
+            rows.push(createData(group.name, (group.members && group.members.length) || 0, group.description, group.id))
         }
         setRows(rows)
     }, [groups])
