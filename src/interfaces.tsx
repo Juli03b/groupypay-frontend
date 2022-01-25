@@ -20,15 +20,28 @@ export interface UserTokenProps {
     phoneNumber?: string,
 }
 export interface MemberProps {
+    id: number,
     name: string,
     email: string,
-    phoneNumber: string
+    phone_number: string
 }
+export interface GroupPaymentProps {
+    id: number,
+    name: string,
+    total_amount: number,
+    member_payments?: MemberPaymentProps[],
+}
+// member_id -> member payment amount
+export interface MemberPaymentProps {
+    member_id: number
+}
+
 export interface GroupProps {
     id: number,
     name: string,
     description: string,
-    members: any
+    members: MemberProps[],
+    payments: GroupPaymentProps[]
 }
 export interface GroupCreateProps {
     name: string,
