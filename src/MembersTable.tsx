@@ -23,48 +23,47 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function createData(
+  id: number,
   name: string,
   email: string,
   phoneNumber: string
 ) {
-  return { name, email, phoneNumber };
+  return { id, name, email, phoneNumber };
 }
 
 const MembersTable: FC<{members: MemberProps[]}> = ({members}) => {
     const [rows, setRows] = useState<any[]>([]);
 
     useEffect(() => {
-        if (!members) return;
         const rows = []
         for (let member of members) {
-            rows.push(createData(member.name, member.email, member.phoneNumber))
+          rows.push(createData(member.id, member.name, member.email, member.phone_number))
         }
-        setRows(rows)
-    }, [members])
 
+        setRows(rows)
+
+    }, [members])
 
     return (
         <TableContainer component={Paper}>
+          {console.log(members)}
           <Table sx={{ minWidth: 500 }} aria-label="customized table">
             <TableHead>
               <TableRow>
                 <StyledTableCell>Name</StyledTableCell>
-                <StyledTableCell align="right">Members</StyledTableCell>
-                <StyledTableCell align="right">Description</StyledTableCell>
+                <StyledTableCell align="right">Email</StyledTableCell>
+                <StyledTableCell align="right">Phone number</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               { rows ? rows.map((row) => (
-                  <StyledTableRow key={row.id}>
-                    <StyledTableCell component="th" scope="row">
-                        {/* <Link to={`/users/${email}/groups/${row.id}`}>
-                            {row.name}
-                        </Link> */}
-                    </StyledTableCell>
-                    <StyledTableCell align="right">{row.members}</StyledTableCell>
-                    <StyledTableCell align="right">{row.description}</StyledTableCell>
-                    <StyledTableCell align="right">{row.phoneNumber}</StyledTableCell>
-                    </StyledTableRow>
+                <StyledTableRow key={row.id}>
+                  <StyledTableCell component="th" scope="row">
+                      {row.name}
+                  </StyledTableCell>
+                  <StyledTableCell align="right">{row.email}</StyledTableCell>
+                  <StyledTableCell align="right">{row.phoneNumber}</StyledTableCell>
+                </StyledTableRow>
               ))
                 :
                 <h1>NONE</h1>}
