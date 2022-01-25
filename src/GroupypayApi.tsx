@@ -1,5 +1,5 @@
 import axios, { AxiosRequestHeaders, AxiosResponse, Method } from "axios";
-import { GroupCreateProps, GroupProps, UserCreateProps, UserPatchProps, UserSignInProps } from "./interfaces";
+import { GroupCreateProps, GroupPaymentProps, GroupProps, MemberPaymentProps, MemberProps, UserCreateProps, UserPatchProps, UserSignInProps } from "./interfaces";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://127.0.0.1:5000";
 
@@ -70,6 +70,21 @@ export default class GroupypayApi {
     const response = await this.request(`/groups/${id}`);
     return response
   }
+  static async addMember(groupId: string, member: MemberProps) {
+    const response = await this.request(`/groups/${groupId}/members`, member, "POST");
+    return response
+  }
+  static async addPayment(groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[]) {
+    console.log("PAYMENT FROM API!!!", name, total_amount, memberPayments)
+    const response = await this.request(`/groups/${groupId}/payments`, {name, total_amount, member_payments: memberPayments}, "POST");
+    return response
+  }
+  static async getPayment(groupId: any, groupPaymentId: any) {
+    console.log("PAYMENT FROM API!!!", groupPaymentId)
+    const response = await this.request(`/groups/${groupId}/payments/${groupPaymentId}`);
+    return response
+  }
+  
 }
 
 GroupypayApi.token = localStorage.getItem("token") && JSON.parse(localStorage.getItem("token") || "") ;
