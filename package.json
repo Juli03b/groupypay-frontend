@@ -76,6 +76,9 @@
     "@storybook/node-logger": "^6.4.13",
     "@storybook/preset-create-react-app": "^4.0.0",
     "@storybook/react": "^6.4.13",
+    "@types/dateformat": "^5.0.0",
+    "dateformat": "^5.0.2",
+    "i": "^0.3.7",
     "webpack": "^5.66.0"
   }
 }
