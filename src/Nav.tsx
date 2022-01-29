@@ -2,28 +2,41 @@ import { FC, useContext } from "react";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AppContext from "./AppContext";
+import { Typography } from "@mui/material";
 
 const Navigation: FC = () => {
     const { user, signOut } = useContext(AppContext);
     return (
-        <Navbar bg="dark" expand="lg" variant="dark">
+        <Navbar bg="transparent" expand="lg" variant={undefined}>
             <Container>
-            <Navbar.Brand href="/">groupypay</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="me-auto">
-                {!user && <Nav.Link href="/">Home</Nav.Link>}
-                {!user && <Nav.Link href="/sign-up">Sign Up</Nav.Link>}
-                {!user && <Nav.Link href="/sign-in">Sign In</Nav.Link>}
-                {user && <Nav.Link href="/dashboard">Dashboard</Nav.Link>}
-                {user && <Nav.Link href="/" onClick={() => signOut()} >Sign Out</Nav.Link>}
-                {/* <NavDropdown title="Dropdown" id="basic-nav-dropdown">
-                    <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                </NavDropdown> */}
+            <Navbar.Brand href="/">
+                <Typography>
+                    groupypay
+                </Typography>
+            </Navbar.Brand>
+            <Navbar.Toggle aria-controls="navbar-nav" />
+            <Navbar.Collapse id="navbar-nav">
+                <Nav className="justify-content-end" style={{ width: "100%" }}>
+                {!user && (
+                    <Typography component={Nav.Link} href="/sign-up" variant="body1">
+                        Sign up
+                    </Typography>
+                )}
+                {!user && (
+                    <Typography component={Nav.Link} href="/sign-in" variant="body1">
+                        Sign in
+                    </Typography>
+                )}
+                {user && (
+                    <Typography component={Nav.Link} href="/dashboard" variant="body1">
+                        Dashboard
+                    </Typography>
+                )}
+                {user && (
+                    <Typography component={Nav.Link} href="/" variant="body1" onClick={() => signOut()}>
+                        Sign out
+                    </Typography>
+                )} 
                 </Nav>
             </Navbar.Collapse>
             </Container>
