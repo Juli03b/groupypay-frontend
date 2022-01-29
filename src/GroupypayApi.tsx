@@ -34,18 +34,16 @@ export default class GroupypayApi {
   
   // User Routes
   static async signUp({ name, email, password, phoneNumber=undefined }: UserCreateProps) {
-    const response: AxiosResponse = await this.request("/auth/sign-up", {name, email, password, phoneNumber}, "POST");
-    console.log("data from signUp", response)
-    return response.data
+    const response = await this.request("/auth/sign-up", {name, email, password, phoneNumber}, "POST");
+    return response
   }
   static async signIn({ email, password }: UserSignInProps) {
     const response: any = await this.request("/auth/token", {email, password}, "POST");
-    console.log("data from signIn", response)
     return response
   }
   static async patchUser(email: string, user: UserPatchProps) {
 
-    const response: AxiosResponse = await this.request(`/users/${email}`, user, "POST");
+    const response: any = await this.request(`/users/${email}`, user, "POST");
     console.log("data from patchUser", response.data)
     return response.data
   }
@@ -58,6 +56,7 @@ export default class GroupypayApi {
   static async getUserGroups(email: string) {
     // Get a user's groups
     const response = await this.request(`/users/${email}/groups`);
+    console.log("RES GORUP", response)
     return response
   }
   static async makeGroup(email: string, group: GroupCreateProps) {
@@ -68,19 +67,19 @@ export default class GroupypayApi {
   static async getGroup(id: string) {
     // Get a group using an id
     const response = await this.request(`/groups/${id}`);
+    console.log("RES GORUP", response)
+
     return response
   }
   static async addMember(groupId: string, member: MemberProps) {
     const response = await this.request(`/groups/${groupId}/members`, member, "POST");
     return response
   }
-  static async addPayment(groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[]) {
-    console.log("PAYMENT FROM API!!!", name, total_amount, memberPayments)
-    const response = await this.request(`/groups/${groupId}/payments`, {name, total_amount, member_payments: memberPayments}, "POST");
+  static async addPayment(groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) {
+    const response = await this.request(`/groups/${groupId}/payments`, {name, total_amount, member_payments: memberPayments, member_id: memberPaid}, "POST");
     return response
   }
   static async getPayment(groupId: any, groupPaymentId: any) {
-    console.log("PAYMENT FROM API!!!", groupPaymentId)
     const response = await this.request(`/groups/${groupId}/payments/${groupPaymentId}`);
     return response
   }
