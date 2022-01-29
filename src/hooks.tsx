@@ -9,7 +9,6 @@ import CloseIcon from '@mui/icons-material/Close';
 */
 export const useAlert = (defaultMsg?: string, defaultVariant?: VariantType) => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar(); 
-  console.log("Still here")
   const snackbar = (msg?: string, variant?: VariantType) => enqueueSnackbar(defaultMsg || msg, {
     variant: defaultVariant || variant,
     action: (key: any) => (
