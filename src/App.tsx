@@ -14,19 +14,26 @@ import GroupypayApi from './GroupypayApi';
 import { useNavigate } from 'react-router-dom';
 import jwtDecode from "jwt-decode";
 import { ContactMail } from '@mui/icons-material';
+import { useAlert } from './hooks';
 
 const setLocalStorageToken = (token: string): void => localStorage.setItem("token", JSON.stringify(token));
 
 const customStyle = createTheme({
   palette: {
+    action: {
+      active: colors.common.black,
+    },
     primary: {
       main: '#000000',
-      contrastText: 'white'
+      contrastText: 'white',
     },
   },
   typography: {
-    fontSize: 15
-  }
+    fontSize: 18,
+    caption: {
+      fontSize: 17
+    }
+  },
 });
 const useStyles = makeStyles({
   warning: {
@@ -40,8 +47,8 @@ const useStyles = makeStyles({
 const App: FC = () => {
   const [token, setTokenState] = useState<string | undefined>(GroupypayApi.token || undefined);
   const [user, setUser] = useState<UserTokenProps | undefined>(token ? jwtDecode<UserTokenProps>(token): undefined);
-  const classes = useStyles()
-  const navigate = useNavigate()
+  const classes = useStyles();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setTokenState(GroupypayApi.token || undefined)
@@ -60,27 +67,23 @@ const App: FC = () => {
 
   // Sign up - use api to create user with form data,
   // api retrieves token, which is stored in react state and local storage
-  const signUp = async (formData: UserCreateProps, setError: (msg: string, property?: any) => void): Promise<void> => {
+  const signUp = async (formData: UserCreateProps, setMessage: any): Promise<void> => {
     try {
-      const { token }: {token: string} = await GroupypayApi.signUp(formData);
+      const { token, warning }: {token: string, warning: string | undefined} = await GroupypayApi.signUp(formData);
+      warning && setMessage(warning, "warning");
       setLocalStorageToken(token);
       setToken(token);
       navigate("/dashboard");
     } catch ([msg]: any) {
-      if(typeof(msg) == "string" && !msg.includes("instance.")) return setError(msg);
-      const fullErrorSplit: any = typeof(msg) == "string" ? msg.split(" ") : undefined;
-      const [errorInstance]: [errorInstance: string] = fullErrorSplit;
-      const errorPropery = errorInstance.substr(errorInstance.indexOf(".") + 1);
-      const errorMsg = fullErrorSplit.slice(1).join(" ")
-      setError(`${errorPropery} ${errorMsg}`, errorPropery)
+      setMessage(msg, "error")
     }
   }
+
   // Sign in - use api to retrieve user token,
   // set token state, and set token in LocalStorage
-
   const signIn = async (formData: UserSignInProps, setError: (msg: string) => void): Promise<void> => {
     try {
-      const {token}: {token: string} = await GroupypayApi.signIn(formData);
+      const {token, warning}: {token: string, warning: string | undefined} = await GroupypayApi.signIn(formData);
       setLocalStorageToken(token);
       setToken(token);
       navigate("/")
@@ -97,7 +100,7 @@ const App: FC = () => {
     setUser(undefined);
     setToken(undefined);
     localStorage.removeItem("token");
-    navigate("/")
+    navigate("/");
   }
 
   // Patch user - change user's information,
@@ -112,7 +115,7 @@ const App: FC = () => {
         phoneNumber: patchedUser.phoneNumber
       }
       setUser(fullUser);
-      setSuccess()
+      setSuccess();
     }catch([msg]){
       if (typeof(msg) == "string") {
         setError(msg);
