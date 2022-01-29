@@ -36,7 +36,6 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
     },
     validationSchema: validationSchema,
     onSubmit: async ({name, total_amount, payInput, memberPaid}) => {
-      console.log("totes MEM", totalMemberPayment, "totestotes", formik.values.total_amount)
       if (totalMemberPayment < parseInt(formik.values.total_amount)) {
         return;
       }
@@ -65,7 +64,6 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
 
   const handleInputChange = (values: React.ChangeEvent<any>, memberId: number) => {
     // Handle changing an input
-    console.log("VALUES SHIT:", values)
     if (!values.target.value) return;
     const newValue: number = parseFloat(values.target.value); // Parse to float
     
@@ -151,6 +149,13 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
                     getOptionLabel={(option) => {
                       return members[option].name
                     }}  
+                    renderOption={(props, option) => {
+                      return (
+                        <li {...props} key={option}>
+                          {members[option].name}
+                        </li>
+                      );
+                    }}
                     id="member-pay-choice"
                     options={Object.keys(members)}
                     sx={{ width: 300 }}
