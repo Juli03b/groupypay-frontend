@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { MemberProps } from "./interfaces";
 
 function createData(
-    id: number,
+    id: string,
     name: string,
     email: string,
     phone_number: string
@@ -11,15 +11,15 @@ function createData(
   return { id, name, email, phone_number }
 }
 
-const PaymentSplit = ({members, formValues, disabled, onChange}:{members: MemberProps[], formValues: any, disabled: boolean, onChange: Function}) => {
+const PaymentSplit = ({members, formValues, disabled, onChange}:{members: MemberProps, formValues: any, disabled: boolean, onChange: Function}) => {
     const [rows, setRows] = useState<any[]>([]);
 
     
     useEffect(() => {
         const rows = []
         console.log("members:", members)
-        for (let member of members) {
-          rows.push(createData(member.id, member.name, member.email, member.phone_number))
+        for (let [memberId, member] of Object.entries(members)) {
+          rows.push(createData(memberId, member.name, member.email, member.phone_number))
         }
 
         setRows(rows);
