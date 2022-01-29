@@ -6,11 +6,12 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Link } from 'react-router-dom';
+import { Link as rrd } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import AppContext from './AppContext';
 import GroupypayApi from './GroupypayApi';
 import { GroupProps } from './interfaces';
+import { Link, Typography } from '@mui/material';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -46,9 +47,10 @@ const GroupsTable = ({groups, email}: {groups: GroupProps[], email: string}) => 
     const [rows, setRows] = useState<any[]>([]);
 
     useEffect(() => {
+        console.log(groups)
         const rows = []
         for (let group of groups) {
-            rows.push(createData(group.name, (group.members && group.members.length) || 0, group.description, group.id))
+            rows.push(createData(group.name, (group.members && Object.keys(group.members).length) || 0, group.description, group.id))
         }
         setRows(rows)
     }, [groups])
@@ -58,21 +60,45 @@ const GroupsTable = ({groups, email}: {groups: GroupProps[], email: string}) => 
         <Table sx={{ minWidth: 500 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Name</StyledTableCell>
-              <StyledTableCell align="right">Members</StyledTableCell>
-              <StyledTableCell align="right">Description</StyledTableCell>
+              <StyledTableCell>
+                <Typography variant="caption">
+                  Name
+
+                </Typography>
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                <Typography variant="caption">
+                  Members
+                </Typography>
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                <Typography variant="caption">
+                  Description
+                </Typography>
+              </StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             { rows ? rows.map((row) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
-                      <Link to={`/users/${email}/groups/${row.id}`}>
+                      <Link component={rrd} to={`/users/${email}/groups/${row.id}`}>
+                        <Typography variant="body1">
                           {row.name}
+                        </Typography>                      
                       </Link>
                   </StyledTableCell>
-                  <StyledTableCell align="right">{row.members}</StyledTableCell>
-                  <StyledTableCell align="right">{row.description}</StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Typography variant="body1">
+                      {row.members}
+                    </Typography>                      
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Typography variant="body1">
+                      {row.description}
+
+                    </Typography>
+                  </StyledTableCell>
                   </StyledTableRow>
             ))
               :
