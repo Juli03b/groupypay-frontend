@@ -17,7 +17,8 @@ const validationSchema = yup.object({
         .required("Email is required"),
     phone_number: yup
         .string()
-        .max(10)                  
+        .min(10, "Number should be at least 10 characters")
+        .max(11, "Number should be at most 11 characters")                  
 });
 
 
@@ -92,7 +93,6 @@ const AddMember: any = ({handleClose, open, addMember}: {handleClose: any, open:
                   error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
                   helperText={formik.touched.phone_number && formik.errors.phone_number}
                   fullWidth
-                  required
               />
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
