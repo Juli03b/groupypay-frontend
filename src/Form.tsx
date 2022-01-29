@@ -20,7 +20,7 @@ interface FormProps {
 const email = yup.string().max(60, "Email should be 60 characters or less").email("Invalid email").required("Email is required");
 const password = yup.string().min(5, "Password should be at least 5 characters").max(20, "Pasword should be 20 characters or less").required("Password is required");
 const name = yup.string().max(30, "Name should be 20 characters or less").min(1, "Name should be at least 1 character").required("Name is required");
-const phoneNumber = yup.string().required("First name is required");
+const phoneNumber = yup.string();
 const namePatch = yup.string().max(30, "First name should be 20 characters or less");
 const signInValidationSchema = yup.object({ email, password });
 const signUpValidationSchema = yup.object({ name, password, email, phoneNumber });
@@ -65,7 +65,11 @@ const Form: FC<FormProps> = (props: FormProps) => {
     const formik = useFormik({
         initialValues: INITIAL_STATE,
         validationSchema: validationSchema,
-        onSubmit: (values) => onSubmit(values, (msg: string) => alert(msg, "error"), () => alert("Profile edited", "success"))
+        onSubmit: (values) => {
+            onSubmit(values, (msg: any, type: any) => {
+                alert(msg, type);
+            });
+        }
     });
 
     return (
@@ -129,7 +133,6 @@ const Form: FC<FormProps> = (props: FormProps) => {
                                 variant="outlined"
                                 autoFocus
                                 fullWidth
-                                required
                             />
                         </Grid>
                     }
