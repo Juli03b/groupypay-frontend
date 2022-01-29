@@ -21,7 +21,7 @@ const Home: FC = () => {
             <Grid item xs={12} xl={4}>
             <Box textAlign={"center"}>
                 <StyledHeader variant="h3">Organize and divvy up group payments quickly</StyledHeader>
-                    <Button color="primary" variant="contained" href="/sign-up">Get started now</Button>
+                    <Button color="primary" variant="outlined" href="/sign-up">Get started now</Button>
                 </Box>
             </Grid>
         </Grid>
