@@ -17,7 +17,6 @@ const PaymentSplit = ({members, formValues, disabled, onChange}:{members: Member
     
     useEffect(() => {
         const rows = []
-        console.log("members:", members)
         for (let [memberId, member] of Object.entries(members)) {
           rows.push(createData(memberId, member.name, member.email, member.phone_number))
         }
@@ -52,6 +51,11 @@ const PaymentSplit = ({members, formValues, disabled, onChange}:{members: Member
                     InputLabelProps={{
                         shrink: true,
                     }}
+                    InputProps={{
+                      inputProps:{
+                      min: 0,
+                      step: "any"
+                    }}}
                     value={formValues[row.id]}
                     onChange={(values) => onChange(values, row.id)}
                     />
