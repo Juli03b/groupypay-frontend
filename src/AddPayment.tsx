@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, DialogContentText, DialogContent, TextField, DialogActions, Button, FormControl, FormLabel, FormControlLabel, RadioGroup, Radio, Box, Typography } from "@mui/material";
+import { Dialog, DialogTitle, DialogContentText, DialogContent, TextField, DialogActions, Button, FormControl, FormLabel, FormControlLabel, RadioGroup, Radio, Box, Typography, Autocomplete, useAutocomplete, Input } from "@mui/material";
 import * as yup from "yup";
 import { useFormik } from 'formik';
 import { useAlert } from "./hooks";
@@ -6,92 +6,112 @@ import { useEffect, useState } from "react";
 import PaymentSplit from "./PaymentSplit";
 import { MemberProps } from "./interfaces";
 
-const validationSchema = yup.object({
-    name: yup
-        .string()
-        .max(45, "Name should be 45 characters or less")
-        .required('Name is required'),
-    total_amount: yup
-        .number()
-        .required("Amount is required"),
-              
-});
-
-
-const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose: any, open: boolean, addPayment: Function, members: MemberProps[]}) => {
+const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose: any, open: boolean, addPayment: Function, members: MemberProps}) => {
   const alert = useAlert();
   const [splitEqually, setSplitEqually] = useState(true);
   const [totalMemberPayment, setTotalMemberPayment] = useState(0);
   const payInput: any = {}
-
-  members.forEach(member => {
-    payInput[member.id] = 0
+  const validationSchema = yup.object({
+      name: yup
+          .string()
+          .max(45, "Name should be 45 characters or less")
+          .required('Name is required'),
+      total_amount: yup
+          .number()
+          .min(totalMemberPayment, `Amount should be greater than or equal to ${totalMemberPayment}`)
+          .required("Amount is required"),
+                
+  });
+  
+  Object.keys(members).forEach(memberId => {
+    payInput[memberId] = 0
   });
 
   const formik = useFormik({
     initialValues: {
       name: "",
       total_amount: "",
+      memberPaid: Object.keys(members)[0],
+      memberPaidInput: "",
       payInput: payInput
     },
     validationSchema: validationSchema,
-    onSubmit: async ({name, total_amount, payInput}) => {
-
+    onSubmit: async ({name, total_amount, payInput, memberPaid}) => {
+      if (totalMemberPayment < parseInt(formik.values.total_amount)) {
+        return;
+      }
       try {
-        await addPayment({name, total_amount}, payInput);
+        await addPayment({name, total_amount}, payInput, memberPaid);
+        alert("Payment added", "success");
         
       } catch (error: any) {
-        console.log("ERROR", error)
         alert(error, "error")
       }
-      alert("Payment added", "success");
     },
   });
+
+
+
   const handleTotalAmountChange = (values: React.ChangeEvent<any>) => {
+    // Handle changing total amount
+
     formik.handleChange(values);
     console.log("VALUES", values.target.value);
 
     if (splitEqually) {
-      const splitValue = (values.target.value / members.length);
-  
-      for (let memberId of Object.keys(formik.values.payInput)) {
-        formik.values.payInput[memberId] = splitValue;
-      }
-      formik.setFieldValue("payInput", formik.values.payInput);
-    } else {
-      // Add current member payments together and set state
-      const memberPayments: number[] = Object.values(formik.values.payInput);
-      const addedPayments = memberPayments.reduce((prevPayment: number, currentPayment: number) => {
-        return prevPayment + currentPayment;
-      }, 0);
-
-      setTotalMemberPayment(addedPayments);
+      getAndSetEqualSplit(values.target.value)
     }
+
+    const memberPayments: number[] = Object.values(formik.values.payInput);
+
+    getAndSetTotalMemberPayment();
+
   };
+
   const handleInputChange = (values: React.ChangeEvent<any>, memberId: number) => {
-    console.log("NEW VALUEL FREOM INPUT:", values.target.value)
+    // Handle changing an input
+    console.log("VALUES SHIT:", values)
     if (!values.target.value) return;
-    const newValue: number = parseInt(values.target.value); // Parse to float
+    const newValue: number = parseFloat(values.target.value); // Parse to float
     
     formik.values.payInput[memberId] = newValue;
-    formik.setFieldValue("payInput", formik.values.payInput) // Set state of input box to newValue
+    formik.setFieldValue("payInput", formik.values.payInput); // Set state of input box to newValue
     
-    console.log("TOTAL_AMOUNT:", formik.values.total_amount)
-    const subtractedValue = parseFloat(formik.values.total_amount) - newValue // Get subtracted value
-    
-    console.log("SUBTRACTED VALUE", subtractedValue)
-    formik.setFieldValue("total_amount", subtractedValue)
+    // const subtractedValue = parseFloat(formik.values.total_amount) - newValue; // Get subtracted value
+    // formik.setFieldValue("total_amount", subtractedValue > 0 ? subtractedValue : 0 );
 
+    getAndSetTotalMemberPayment();
   }
+
+  const getAndSetEqualSplit = (totalAmount: number) => {
+    // Get total amount / number of members to get the new value and set for each input
+
+    const splitValue = (totalAmount / Object.keys(members).length);
+
+    for (let memberId of Object.keys(formik.values.payInput)) {
+      formik.values.payInput[memberId] = splitValue;
+    }
+    formik.setFieldValue("payInput", formik.values.payInput);
+  }
+  const getAndSetTotalMemberPayment = () => {
+    // Sums all member payments and sets totalMemberPayment to the sum
+    const memberPayments: number[] = Object.values(formik.values.payInput);
+    const addedPayments = memberPayments.reduce((prevPayment: number, currentPayment: number) => {
+      return prevPayment + currentPayment;
+    }, 0);
+    setTotalMemberPayment(addedPayments);
+  }
+
   return (
     <div>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Add a payment</DialogTitle>
         <DialogContent>
-            <DialogContentText>
-                Enter a name and amount 
-            </DialogContentText>
             <form onSubmit={formik.handleSubmit}>
+              <Box sx={{marginY: "2.5vh"}}>
+                <DialogContentText>
+                  Enter a name and amount 
+                </DialogContentText>
                 <TextField
                   autoFocus
                   margin="dense"
@@ -121,28 +141,68 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
                   fullWidth
                   required
                 />
-                <FormControl sx={{marginTop: "2.5vh", marginBottom: "2.5vh"}}>
+              </Box>
+
+              <Box sx={{ width: 300, marginTop: "2.5vh"}}>
+                  <Autocomplete
+                    value={formik.values.memberPaid}
+                    onChange={(event: any, newValue: string | null| any) => {
+                      formik.setFieldValue("memberPaid", newValue);
+                    }}
+                    inputValue={formik.values.memberPaidInput}
+                    onInputChange={(event, newInputValue) => {
+                      formik.setFieldValue("memberPaidInput", newInputValue);
+                    }}
+                    getOptionLabel={(option) => {
+                      return members[option].name
+                    }}  
+                    id="member-pay-choice"
+                    options={Object.keys(members)}
+                    sx={{ width: 300 }}
+                    renderInput={(params) => <TextField {...params} label="Who's paying" />}
+                  />
+              </Box>
+              
+              <Box>
+                <FormControl sx={{marginY: "2.5vh"}}>
                   <FormLabel id="split-choice">How much is everyone paying?</FormLabel>
                   <RadioGroup
                     aria-labelledby="split-choice"
                     defaultValue="split-equally"
                     name="radio-buttons-group"
                     onChange={(value) => {
-                      setSplitEqually(value.target.value === "split-equally" )
+                      if (value.target.value === "split-equally"){
+                        // If split equally, set split equally to true and split payments and set inputs
+                        setSplitEqually(true);
+                        getAndSetEqualSplit(parseFloat(formik.values.total_amount) || 0);
+                      }else{
+                        setSplitEqually(false);
+
+                      }
                     }}
                   >
                     <FormControlLabel value="split-equally" control={<Radio />} label="Split Equally" />
                     <FormControlLabel value="split" control={<Radio />} label="Split" />
                   </RadioGroup>
                 </FormControl>
-                <PaymentSplit members={members} formValues={formik.values.payInput} disabled={splitEqually} onChange={handleInputChange} />
+              </Box>
+
+              <PaymentSplit members={members} formValues={formik.values.payInput} disabled={splitEqually} onChange={handleInputChange} />
+              
               {!splitEqually && (
                 <Box sx={{display: "inline-block"}}>
                   <Typography variant="overline">Current total: </Typography>
-                  <Typography variant="caption">$ {totalMemberPayment}</Typography>
+                  <Typography variant="caption">${totalMemberPayment}</Typography>
 
                 </Box>
               )}
+              
+              {
+                totalMemberPayment < parseInt(formik.values.total_amount) && (
+                  <Typography variant="caption" sx={{color: "#d32f2f"}}> will not cover ${formik.values.total_amount}</Typography>
+                )
+              }
+
               <DialogActions sx={{display: "inline-block", marginLeft: "7vw", marginTop: "1vw"}}>
                 <Button onClick={handleClose}>Cancel</Button>
                 <Button color="primary" variant="contained" type="submit">Add Payment</Button>
