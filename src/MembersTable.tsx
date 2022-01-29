@@ -1,4 +1,4 @@
-import { Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow } from "@mui/material";
+import { Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { MemberProps } from "./interfaces";
 
@@ -23,7 +23,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function createData(
-  id: number,
+  id: string,
   name: string,
   email: string,
   phoneNumber: string
@@ -31,13 +31,14 @@ function createData(
   return { id, name, email, phoneNumber };
 }
 
-const MembersTable: FC<{members: MemberProps[]}> = ({members}) => {
+const MembersTable: FC<{members: MemberProps}> = ({members}) => {
+
     const [rows, setRows] = useState<any[]>([]);
 
     useEffect(() => {
         const rows = []
-        for (let member of members) {
-          rows.push(createData(member.id, member.name, member.email, member.phone_number))
+        for (let [memberId, member] of Object.entries(members)) {
+          rows.push(createData(memberId, member.name, member.email, member.phone_number))
         }
 
         setRows(rows)
@@ -46,23 +47,39 @@ const MembersTable: FC<{members: MemberProps[]}> = ({members}) => {
 
     return (
         <TableContainer component={Paper}>
-          {console.log(members)}
           <Table sx={{ minWidth: 500 }} aria-label="customized table">
             <TableHead>
               <TableRow>
-                <StyledTableCell>Name</StyledTableCell>
-                <StyledTableCell align="right">Email</StyledTableCell>
-                <StyledTableCell align="right">Phone number</StyledTableCell>
+                <StyledTableCell>
+                  <Typography>
+
+                  </Typography>
+                  Name
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <Typography variant="caption">
+                    Email
+                  </Typography>
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <Typography variant="caption">
+                    Phone number
+                  </Typography>
+                </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               { rows ? rows.map((row) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
-                      {row.name}
+                      <Typography variant="body1">{row.name}</Typography>
                   </StyledTableCell>
-                  <StyledTableCell align="right">{row.email}</StyledTableCell>
-                  <StyledTableCell align="right">{row.phoneNumber}</StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Typography variant="body1">{row.email}</Typography>
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Typography variant="body1">{row.phoneNumber}</Typography>
+                  </StyledTableCell>
                 </StyledTableRow>
               ))
                 :
