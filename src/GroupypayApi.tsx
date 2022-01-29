@@ -66,8 +66,6 @@ export default class GroupypayApi {
   static async getGroup(id: string) {
     // Get a group using an id
     const response = await this.request(`/groups/${id}`);
-    console.log("RES GORUP", response)
-
     return response
   }
   static async addMember(groupId: string, member: MemberProps) {
