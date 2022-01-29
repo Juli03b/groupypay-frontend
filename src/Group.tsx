@@ -25,8 +25,7 @@ const Group = () => {
     const handleMemberSubmit = async (memberFromForm: MemberProps) => {
         if (!groupId) return;
         const {member} = await GroupypayApi.addMember(groupId, memberFromForm);
-        console.log("MEMBER",member)
-        console.log("MEMBERS B4", members)
+
         setMembers((members) => ({...members, [member.id]: member}));
     }
 
@@ -49,9 +48,6 @@ const Group = () => {
             setMembers(group.members)
             setPayments(group.payments)
             setGroup(group);
-            console.log("MEMBERS", members)
-
-            console.log("payments", payments)
         }
         groupRes()
 
