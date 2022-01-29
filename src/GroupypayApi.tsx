@@ -56,7 +56,6 @@ export default class GroupypayApi {
   static async getUserGroups(email: string) {
     // Get a user's groups
     const response = await this.request(`/users/${email}/groups`);
-    console.log("RES GORUP", response)
     return response
   }
   static async makeGroup(email: string, group: GroupCreateProps) {
