@@ -31,73 +31,76 @@ const AddMember: any = ({handleClose, open, addMember}: {handleClose: any, open:
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      console.log("valiues:", values)
-      const member = await addMember(values);
-      alert("Member created", "success");
-      console.log("NEW member", member)
+      try {
+        await addMember(values);
+        
+        alert("Member created", "success");
+      } catch (errors: any) {
+        for (const error of errors) {
+          alert(error, "error")
+        }
+      }      
     },
   });
 
   return (
-    <div>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Add a member</DialogTitle>
-        <DialogContent>
-            <DialogContentText>
-                Enter name, email, and phone number
-            </DialogContentText>
-            <form onSubmit={formik.handleSubmit}>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    name="name"
-                    id="name"
-                    label="Name"
-                    type="text"
-                    variant="outlined"
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    error={formik.touched.name && Boolean(formik.errors.name)}
-                    helperText={formik.touched.name && formik.errors.name}
-                    fullWidth
-                    required
-                />
-                <TextField
-                    margin="dense"
-                    id="email"
-                    name="email"
-                    label="Email"
-                    type="text"
-                    variant="outlined"
-                    value={formik.values.email}
-                    onChange={formik.handleChange}
-                    error={formik.touched.email && Boolean(formik.errors.email)}
-                    helperText={formik.touched.email && formik.errors.email}
-                    fullWidth
-                    required
-                />
-                <TextField
-                    margin="dense"
-                    id="phone_number"
-                    name="phone_number"
-                    label="Phone"
-                    type="text"
-                    variant="outlined"
-                    value={formik.values.phone_number}
-                    onChange={formik.handleChange}
-                    error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
-                    helperText={formik.touched.phone_number && formik.errors.phone_number}
-                    fullWidth
-                    required
-                />
-            <DialogActions>
-              <Button onClick={handleClose}>Cancel</Button>
-              <Button color="primary" variant="contained" type="submit">Add member</Button>
-            </DialogActions>
-            </form>
-        </DialogContent>
-      </Dialog>
-    </div>
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Add a member</DialogTitle>
+      <DialogContent>
+          <DialogContentText>
+              Enter name, email, and phone number
+          </DialogContentText>
+          <form onSubmit={formik.handleSubmit}>
+              <TextField
+                  autoFocus
+                  margin="dense"
+                  name="name"
+                  id="name"
+                  label="Name"
+                  type="text"
+                  variant="outlined"
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.name && Boolean(formik.errors.name)}
+                  helperText={formik.touched.name && formik.errors.name}
+                  fullWidth
+                  required
+              />
+              <TextField
+                  margin="dense"
+                  id="email"
+                  name="email"
+                  label="Email"
+                  type="text"
+                  variant="outlined"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  error={formik.touched.email && Boolean(formik.errors.email)}
+                  helperText={formik.touched.email && formik.errors.email}
+                  fullWidth
+                  required
+              />
+              <TextField
+                  margin="dense"
+                  id="phone_number"
+                  name="phone_number"
+                  label="Phone"
+                  type="text"
+                  variant="outlined"
+                  value={formik.values.phone_number}
+                  onChange={formik.handleChange}
+                  error={formik.touched.phone_number && Boolean(formik.errors.phone_number)}
+                  helperText={formik.touched.phone_number && formik.errors.phone_number}
+                  fullWidth
+                  required
+              />
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button color="primary" variant="contained" type="submit">Add member</Button>
+          </DialogActions>
+          </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
