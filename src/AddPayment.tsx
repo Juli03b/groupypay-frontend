@@ -12,18 +12,17 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
   const [totalMemberPayment, setTotalMemberPayment] = useState(0);
   const payInput: any = {}
   const validationSchema = yup.object({
-      name: yup
-          .string()
-          .max(45, "Name should be 45 characters or less")
-          .required('Name is required'),
-      total_amount: yup
-          .number()
-          .min(totalMemberPayment, `Amount should be greater than or equal to ${totalMemberPayment}`)
-          .required("Amount is required"),
-                
+    name: yup
+        .string()
+        .max(45, "Name should be 45 characters or less")
+        .required('Name is required'),
+    total_amount: yup
+        .number()
+        .min(totalMemberPayment, `Amount should be greater than or equal to ${totalMemberPayment}`)
+        .required("Amount is required"),
   });
-  
   Object.keys(members).forEach(memberId => {
+    // Populate inputs
     payInput[memberId] = 0
   });
 
@@ -37,6 +36,7 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
     },
     validationSchema: validationSchema,
     onSubmit: async ({name, total_amount, payInput, memberPaid}) => {
+      console.log("totes MEM", totalMemberPayment, "totestotes", formik.values.total_amount)
       if (totalMemberPayment < parseInt(formik.values.total_amount)) {
         return;
       }
@@ -55,17 +55,12 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
   const handleTotalAmountChange = (values: React.ChangeEvent<any>) => {
     // Handle changing total amount
 
-    formik.handleChange(values);
-    console.log("VALUES", values.target.value);
+    formik.handleChange(values); // Change total amount input value
 
     if (splitEqually) {
-      getAndSetEqualSplit(values.target.value)
+      getAndSetEqualSplit(values.target.value); // Change input values to split value
     }
-
-    const memberPayments: number[] = Object.values(formik.values.payInput);
-
     getAndSetTotalMemberPayment();
-
   };
 
   const handleInputChange = (values: React.ChangeEvent<any>, memberId: number) => {
@@ -76,10 +71,7 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
     
     formik.values.payInput[memberId] = newValue;
     formik.setFieldValue("payInput", formik.values.payInput); // Set state of input box to newValue
-    
-    // const subtractedValue = parseFloat(formik.values.total_amount) - newValue; // Get subtracted value
-    // formik.setFieldValue("total_amount", subtractedValue > 0 ? subtractedValue : 0 );
-
+ 
     getAndSetTotalMemberPayment();
   }
 
@@ -93,12 +85,15 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
     }
     formik.setFieldValue("payInput", formik.values.payInput);
   }
+
   const getAndSetTotalMemberPayment = () => {
     // Sums all member payments and sets totalMemberPayment to the sum
     const memberPayments: number[] = Object.values(formik.values.payInput);
+    console.log("MEMPAYMS", memberPayments)
     const addedPayments = memberPayments.reduce((prevPayment: number, currentPayment: number) => {
       return prevPayment + currentPayment;
     }, 0);
+
     setTotalMemberPayment(addedPayments);
   }
 
@@ -173,11 +168,17 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
                     onChange={(value) => {
                       if (value.target.value === "split-equally"){
                         // If split equally, set split equally to true and split payments and set inputs
+                        
                         setSplitEqually(true);
-                        getAndSetEqualSplit(parseFloat(formik.values.total_amount) || 0);
+
+                        const totalAmountFloat = parseFloat(formik.values.total_amount);
+
+                        getAndSetEqualSplit(totalAmountFloat);
+                        setTotalMemberPayment(totalAmountFloat);
+
+                        validationSchema.fields.total_amount.min(totalMemberPayment);
                       }else{
                         setSplitEqually(false);
-
                       }
                     }}
                   >
@@ -193,15 +194,15 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
                 <Box sx={{display: "inline-block"}}>
                   <Typography variant="overline">Current total: </Typography>
                   <Typography variant="caption">${totalMemberPayment}</Typography>
+                  
+                  {
+                    totalMemberPayment < parseInt(formik.values.total_amount) && (
+                      <Typography variant="caption" sx={{color: "#d32f2f"}}> will not cover ${formik.values.total_amount}</Typography>
+                    )
+                  }
 
                 </Box>
               )}
-              
-              {
-                totalMemberPayment < parseInt(formik.values.total_amount) && (
-                  <Typography variant="caption" sx={{color: "#d32f2f"}}> will not cover ${formik.values.total_amount}</Typography>
-                )
-              }
 
               <DialogActions sx={{display: "inline-block", marginLeft: "7vw", marginTop: "1vw"}}>
                 <Button onClick={handleClose}>Cancel</Button>
