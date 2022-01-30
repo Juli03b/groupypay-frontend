@@ -9,10 +9,9 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import { GroupPaymentProps, MemberPaymentProps, MemberProps } from './interfaces';
-import { Box, Card, Chip, Divider, Stack, Switch } from '@mui/material';
+import { Box, Card, Chip, Divider, Icon, Menu, MenuItem, Stack, Switch } from '@mui/material';
 import dateFormat, { masks } from "dateformat";
 import PaidIcon from '@mui/icons-material/Paid';
-import GroupypayApi from './GroupypayApi';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -53,11 +52,28 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
     );
 };
 
-const PaymentPopup = ({handleClose, payment, members, payPayment}: {handleClose: any, payment: GroupPaymentProps, members: any, payPayment: any}) => {
+const PaymentPopup = ({handleClose, payment, members, payPayment, openPayPal}: {handleClose: any, payment: GroupPaymentProps, members: any, payPayment: any, openPayPal: any}) => {
     console.log("PAYMENT",payment)
     console.log("MEMBERS",members)
     const [memberPayments, setMemberPayments] = React.useState<MemberPaymentProps[]>([]);
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
 
+    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
+    const setIconGreen = (paymentId: number, memberId: number, idx: number) => {
+        payPayment(paymentId, memberId, () => {
+            setMemberPayments((payments: any) => {
+                payments[idx].paid = true
+                return [...payments]
+            })
+        })
+    }
+    
     React.useEffect(() => {
         setMemberPayments(payment.member_payments || [])
     }, [])
@@ -109,21 +125,49 @@ const PaymentPopup = ({handleClose, payment, members, payPayment}: {handleClose:
                     {memberPayments.map((memberPayment, idx) => {
                         const member = members[memberPayment.member_id]
                         return (
-                            <Card key={memberPayment.member_id} sx={{my: "1vh"}} >
+                            <Card 
+                                key={memberPayment.member_id} 
+                                sx={{my: "1vh"}} 
+                            >
                                 {console.log("PAYMENT", memberPayment)}
                                 <Box sx={{ p: 2, display: 'flex' }}>
                                     <Stack spacing={0.5}>
-                                        <Typography fontWeight={700}>{member.name}</Typography>
+                                        <Typography fontWeight={500} variant="body1">{member.name}</Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             ${memberPayment.amount}
                                         </Typography>
                                     </Stack>
-                                    <IconButton onClick={() => payPayment(payment.id, memberPayment.member_id, () => setMemberPayments(payments => {
-                                        payments[idx].paid = true
-                                        return [...payments]
-                                    }))}>
-                                        <PaidIcon sx={{color: memberPayment.paid ? "green" : "red" }} />
+                                    <IconButton 
+                                        onClick={!memberPayment.paid ? handleClick : () => ""} 
+                                        id={`paid-button-${memberPayment.member_id}`} 
+                                        sx={{marginRight: "-35vw"}}
+                                    >
+                                        <PaidIcon 
+                                            sx={{color: memberPayment.paid ? "green" : "red"}} 
+                                        />
                                     </IconButton>
+                                    <Menu
+                                        id={`menu-${memberPayment.member_id}`}
+                                        anchorEl={anchorEl}
+                                        open={open}
+                                        onClose={handleCloseMenu}
+                                        MenuListProps={{
+                                            'aria-labelledby': `paid-button-${memberPayment.member_id}`,
+                                        }}
+                                        sx={{marginRight: "-35vw"}}
+                                    >
+                                        <MenuItem onClick={() => (handleCloseMenu(), setIconGreen(payment.id, memberPayment.member_id, idx))}>
+                                            <Typography variant="subtitle2">
+                                                Mark paid
+                                            </Typography>
+                                        </MenuItem>
+                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(payment, memberPayment, member))}>
+                                            <Typography variant="subtitle2">
+                                                Pay with
+                                            </Typography>
+                                            <span className="material-icons">paypal</span>
+                                        </MenuItem>
+                                    </Menu>
                                 </Box>
                                 <Divider />
                             </Card>
