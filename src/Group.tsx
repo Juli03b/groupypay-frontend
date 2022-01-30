@@ -1,5 +1,5 @@
 import { Add, ConstructionOutlined } from "@mui/icons-material";
-import { Container, IconButton, Typography } from "@mui/material";
+import { Backdrop, CircularProgress, Container, IconButton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -42,9 +42,8 @@ const Group = () => {
 
     const payPayment = async (groupPaymentId: number, memberId: number, setMemberPayments: any) => {
         const message = await GroupypayApi.payPayment(groupId, groupPaymentId, memberId);
-        alert(message, "success")
-
-        setMemberPayments()
+        alert(message, "success");
+        setMemberPayments();
     }
 
     useEffect(() => {
@@ -109,7 +108,12 @@ const Group = () => {
                 </Container>
             ) :
             (
-                <Typography variant="h1" sx={{color: "gray", fontWeight: 600, marginTop: "25vh"}} textAlign={"center"}>404</Typography>
+                <Backdrop
+                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+                    open={!!group}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
             )
     )
 }
