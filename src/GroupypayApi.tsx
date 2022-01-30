@@ -74,10 +74,16 @@ export default class GroupypayApi {
   }
   static async addPayment(groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) {
     const response = await this.request(`/groups/${groupId}/payments`, {name, total_amount, member_payments: memberPayments, member_id: memberPaid}, "POST");
+    console.log("ADD PAYMNT RES", response)
     return response
   }
   static async getPayment(groupId: any, groupPaymentId: any) {
     const response = await this.request(`/groups/${groupId}/payments/${groupPaymentId}`);
+    return response
+  }
+
+  static async payPayment(groupId: any, groupPaymentId: any, memberId: any) {
+    const response = await this.request(`/groups/${groupId}/payments/${groupPaymentId}/member-payments/${memberId}/pay`, undefined, "POST")
     return response
   }
   
