@@ -13,8 +13,6 @@ import { GroupCreateProps, UserCreateProps, UserPatchProps, UserSignInProps, Use
 import GroupypayApi from './GroupypayApi';
 import { useNavigate } from 'react-router-dom';
 import jwtDecode from "jwt-decode";
-import { ContactMail } from '@mui/icons-material';
-import { useAlert } from './hooks';
 
 const setLocalStorageToken = (token: string): void => localStorage.setItem("token", JSON.stringify(token));
 
