@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import { Add, ConstructionOutlined } from "@mui/icons-material";
 import { Container, IconButton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useEffect, useState } from "react";
@@ -40,11 +40,18 @@ const Group = () => {
           }
     }
 
+    const payPayment = async (groupPaymentId: number, memberId: number, setMemberPayments: any) => {
+        const message = await GroupypayApi.payPayment(groupId, groupPaymentId, memberId);
+        alert(message, "success")
+
+        setMemberPayments()
+    }
+
     useEffect(() => {
         if (!groupId) return;
         const groupRes = async () => {
             const group: GroupProps = await GroupypayApi.getGroup(groupId);
-            console.log(group)
+
             setMembers(group.members)
             setPayments(group.payments)
             setGroup(group);
@@ -83,7 +90,7 @@ const Group = () => {
                                 <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Add expense</Typography>
                                 <IconButton aria-label="add-member" onClick={() => setAddPayment(true)} ><Add sx={{marginBottom: "16px"}}/></IconButton>
                                 {addPayment && <AddPayment handleClose={() => setAddPayment(false)} open={addPayment} addPayment={handlePaymentSubmit} members={members} />}
-                                {paymentOpen && <PaymentPopup handleClose={() => setPaymentOpen(undefined)} payment={paymentOpen} members={members} />}
+                                {paymentOpen && <PaymentPopup handleClose={() => setPaymentOpen(undefined)} payPayment={payPayment} payment={paymentOpen} members={members} />}
 
                                 <PaymentsTable payments={payments} onClick={(groupPayment: GroupPaymentProps) => {
                                     setPaymentOpen(groupPayment)
