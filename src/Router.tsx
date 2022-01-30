@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import { FC, useContext } from "react";
 import { Navigate, Route, Routes } from "react-router";
 import AppContext from "./AppContext";
@@ -5,13 +6,11 @@ import Dashboard from "./Dashboard";
 import Group from "./Group";
 import GroupPayment from "./GroupPayment";
 import Home from "./Home";
-import { useAlert } from "./hooks";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 
 const Router: FC = () => {
     const { user } = useContext(AppContext);
-    const alert = useAlert();
     const paths: {path: string, signedIn: boolean, component: FC}[] = [
         {path: "/sign-up", signedIn: false, component: SignUp}, 
         {path: "/sign-in", signedIn: false, component: SignIn}, 
@@ -33,11 +32,11 @@ const Router: FC = () => {
 
         })}
         {user && <Route path="/groups/:groupId/payments/:paymentId" element={<GroupPayment />} />}        
-        {user && <Route path="/users/:email/groups/:groupId" element={<Group />} />}        
+        {user && <Route path="/users/:email/groups/:groupId" element={<Group />} />}
         {!user && <Route path="/" element={<Home/>} />} // Signed in are redirected to /dashboard
         {user && <Route path="/" element={<Navigate replace to={"/dashboard"}/>} />} // Signed in are redirected to /dashboard
         
-        <Route path="*" />
+        <Route path="*" element={<Typography variant="h1" sx={{color: "gray", fontWeight: 600, marginTop: "25vh"}} textAlign={"center"}>404</Typography>} />
     </Routes>)
 
 } 
