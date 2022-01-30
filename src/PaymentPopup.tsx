@@ -8,10 +8,11 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
-import { GroupPaymentProps, MemberProps } from './interfaces';
+import { GroupPaymentProps, MemberPaymentProps, MemberProps } from './interfaces';
 import { Box, Card, Chip, Divider, Stack, Switch } from '@mui/material';
 import dateFormat, { masks } from "dateformat";
 import PaidIcon from '@mui/icons-material/Paid';
+import GroupypayApi from './GroupypayApi';
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -52,9 +53,15 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
     );
 };
 
-const PaymentPopup = ({handleClose, payment, members}: {handleClose: any, payment: GroupPaymentProps, members: any}) => {
+const PaymentPopup = ({handleClose, payment, members, payPayment}: {handleClose: any, payment: GroupPaymentProps, members: any, payPayment: any}) => {
     console.log("PAYMENT",payment)
     console.log("MEMBERS",members)
+    const [memberPayments, setMemberPayments] = React.useState<MemberPaymentProps[]>([]);
+
+    React.useEffect(() => {
+        setMemberPayments(payment.member_payments || [])
+    }, [])
+
     return (
         <BootstrapDialog
             onClose={handleClose}
@@ -99,20 +106,23 @@ const PaymentPopup = ({handleClose, payment, members}: {handleClose: any, paymen
 
                 {/* Member Payments */}
                 <Box>
-                    {payment.member_payments?.map(payment => {
-                        const member = members[payment.member_id]
+                    {memberPayments.map((memberPayment, idx) => {
+                        const member = members[memberPayment.member_id]
                         return (
-                            <Card>
-                                {console.log("PAYMENT", payment)}
+                            <Card key={memberPayment.member_id} sx={{my: "1vh"}} >
+                                {console.log("PAYMENT", memberPayment)}
                                 <Box sx={{ p: 2, display: 'flex' }}>
                                     <Stack spacing={0.5}>
-                                        <Typography fontWeight={700}>{member && member.name}</Typography>
+                                        <Typography fontWeight={700}>{member.name}</Typography>
                                         <Typography variant="body2" color="text.secondary">
-                                            ${payment.amount}
+                                            ${memberPayment.amount}
                                         </Typography>
                                     </Stack>
-                                    <IconButton>
-                                        <PaidIcon sx={{color: payment.paid ? "green" : "red" }} />
+                                    <IconButton onClick={() => payPayment(payment.id, memberPayment.member_id, () => setMemberPayments(payments => {
+                                        payments[idx].paid = true
+                                        return [...payments]
+                                    }))}>
+                                        <PaidIcon sx={{color: memberPayment.paid ? "green" : "red" }} />
                                     </IconButton>
                                 </Box>
                                 <Divider />
