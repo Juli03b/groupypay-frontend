@@ -36,10 +36,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 function createData(
   name: string,
   members: number,
+  payments: number,
   description: string,
   id: number
 ) {
-  return { name, members, description, id };
+  return { name, members, payments, description, id };
 }
 
 
@@ -50,7 +51,7 @@ const GroupsTable = ({groups, email}: {groups: GroupProps[], email: string}) => 
         console.log(groups)
         const rows = []
         for (let group of groups) {
-            rows.push(createData(group.name, (group.members && Object.keys(group.members).length) || 0, group.description, group.id))
+            rows.push(createData(group.name, (group.members && Object.keys(group.members).length) || 0,  group.payments.length, group.description, group.id))
         }
         setRows(rows)
     }, [groups])
@@ -63,12 +64,16 @@ const GroupsTable = ({groups, email}: {groups: GroupProps[], email: string}) => 
               <StyledTableCell>
                 <Typography variant="caption">
                   Name
-
                 </Typography>
               </StyledTableCell>
               <StyledTableCell align="right">
                 <Typography variant="caption">
                   Members
+                </Typography>
+              </StyledTableCell>
+              <StyledTableCell align="right">
+                <Typography variant="caption">
+                  Payments
                 </Typography>
               </StyledTableCell>
               <StyledTableCell align="right">
@@ -91,6 +96,11 @@ const GroupsTable = ({groups, email}: {groups: GroupProps[], email: string}) => 
                   <StyledTableCell align="right">
                     <Typography variant="body1">
                       {row.members}
+                    </Typography>                      
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Typography variant="body1">
+                      {row.payments}
                     </Typography>                      
                   </StyledTableCell>
                   <StyledTableCell align="right">
