@@ -2,7 +2,8 @@ import { FC, useContext } from "react";
 import { Container, Navbar, Nav } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AppContext from "./AppContext";
-import { Typography } from "@mui/material";
+import { IconButton, Typography } from "@mui/material";
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Navigation: FC = () => {
     const { user, signOut } = useContext(AppContext);
@@ -33,9 +34,9 @@ const Navigation: FC = () => {
                     </Typography>
                 )}
                 {user && (
-                    <Typography component={Nav.Link} href="/" variant="body1" onClick={() => signOut()}>
-                        Sign out
-                    </Typography>
+                    <IconButton sx={{mx:"1vh"}}>
+                        <LogoutIcon onClick={() => signOut()} />
+                    </IconButton>
                 )} 
                 </Nav>
             </Navbar.Collapse>
