@@ -53,11 +53,20 @@ export default class GroupypayApi {
     console.log("data from getUser", response.data)
     return response.data
   }
+  static async searchUsers(name: string) {
+    // Search for users
+    const response = await this.request(`/users/`, {name});
+    console.log("data from getUser", response)
+    return response
+  }
+
   static async getUserGroups(email: string) {
     // Get a user's groups
     const response = await this.request(`/users/${email}/groups`);
     return response
   }
+
+  // Group Routes
   static async makeGroup(email: string, group: GroupCreateProps) {
     // Make a group for a user
     const response: AxiosResponse = await this.request(`/users/${email}/groups`, group, "POST");
@@ -68,8 +77,8 @@ export default class GroupypayApi {
     const response = await this.request(`/groups/${id}`);
     return response
   }
-  static async addMember(groupId: string, member: MemberProps) {
-    const response = await this.request(`/groups/${groupId}/members`, member, "POST");
+  static async addMember(groupId: string, {name, email, phone_number}: MemberProps) {
+    const response = await this.request(`/groups/${groupId}/members`, {name, email, ...{phone_number: phone_number || ""} }, "POST");
     return response
   }
   static async addPayment(groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) {
