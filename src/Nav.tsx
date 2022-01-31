@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import AppContext from "./AppContext";
 import { IconButton, Typography } from "@mui/material";
 import LogoutIcon from '@mui/icons-material/Logout';
+import PersonIcon from '@mui/icons-material/Person';
 
 const Navigation: FC = () => {
     const { user, signOut } = useContext(AppContext);
@@ -34,8 +35,13 @@ const Navigation: FC = () => {
                     </Typography>
                 )}
                 {user && (
-                    <IconButton sx={{mx:"1vh"}}>
-                        <LogoutIcon onClick={() => signOut()} />
+                    <IconButton sx={{mx:"1vh"}} LinkComponent={Nav.Link} href={`/profile/${user.email}`}>
+                        <PersonIcon />
+                    </IconButton>
+                )} 
+                {user && (
+                    <IconButton sx={{mx:"1vh"}} onClick={() => signOut()}>
+                        <LogoutIcon />
                     </IconButton>
                 )} 
                 </Nav>
