@@ -23,7 +23,8 @@ export interface MemberProps {
     [id: number | string] : {
         name: string,
         email: string,
-        phone_number: string
+        phone_number: string,
+        payments: MemberPaymentProps[]
     }
 }
 export interface GroupPaymentProps {
