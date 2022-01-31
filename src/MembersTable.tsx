@@ -1,6 +1,6 @@
 import { Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
-import { MemberProps } from "./interfaces";
+import { MemberPaymentProps, MemberProps } from "./interfaces";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -26,9 +26,10 @@ function createData(
   id: string,
   name: string,
   email: string,
-  phoneNumber: string
+  phoneNumber: string,
+  payments: number
 ) {
-  return { id, name, email, phoneNumber };
+  return { id, name, email, phoneNumber, payments };
 }
 
 const MembersTable: FC<{members: MemberProps}> = ({members}) => {
@@ -38,7 +39,8 @@ const MembersTable: FC<{members: MemberProps}> = ({members}) => {
     useEffect(() => {
         const rows = []
         for (let [memberId, member] of Object.entries(members)) {
-          rows.push(createData(memberId, member.name, member.email, member.phone_number))
+          console.log("member:", member);
+          rows.push(createData(memberId, member.name, member.email, member.phone_number, member.payments.length));
         }
 
         setRows(rows)
@@ -51,10 +53,9 @@ const MembersTable: FC<{members: MemberProps}> = ({members}) => {
             <TableHead>
               <TableRow>
                 <StyledTableCell>
-                  <Typography>
-
+                  <Typography variant="caption">
+                    Name
                   </Typography>
-                  Name
                 </StyledTableCell>
                 <StyledTableCell align="right">
                   <Typography variant="caption">
@@ -64,6 +65,11 @@ const MembersTable: FC<{members: MemberProps}> = ({members}) => {
                 <StyledTableCell align="right">
                   <Typography variant="caption">
                     Phone number
+                  </Typography>
+                </StyledTableCell>
+                <StyledTableCell align="right">
+                  <Typography variant="caption">
+                    Payments
                   </Typography>
                 </StyledTableCell>
               </TableRow>
@@ -78,7 +84,10 @@ const MembersTable: FC<{members: MemberProps}> = ({members}) => {
                     <Typography variant="body1">{row.email}</Typography>
                   </StyledTableCell>
                   <StyledTableCell align="right">
-                    <Typography variant="body1">{row.phoneNumber}</Typography>
+                    <Typography variant="body1">{row.phoneNumber || "Not provided"}</Typography>
+                  </StyledTableCell>
+                  <StyledTableCell align="right">
+                    <Typography variant="body1">{row.payments}</Typography>
                   </StyledTableCell>
                 </StyledTableRow>
               ))
