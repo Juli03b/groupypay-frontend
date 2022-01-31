@@ -12,6 +12,7 @@ import PaymentsTable from "./PaymentsTable";
 import { useAlert } from "./hooks";
 import PaymentPopup from "./PaymentPopup";
 import PayPal from "./PayPal";
+import Loading from "./Loading";
 
 const Group = () => {
     const alert = useAlert();
@@ -22,7 +23,7 @@ const Group = () => {
     const [addMember, setAddMember] = useState<boolean>(false);
     const [addPayment, setAddPayment] = useState<boolean>(false);
     const [paymentOpen, setPaymentOpen] = useState<GroupPaymentProps | undefined>(undefined);
-    const [payPal, setPaypal] = useState<undefined | {payment: any, member: any, memberPayment: any}>(undefined);
+    const [payPal, setPaypal] = useState<undefined | {payment: any, member: any, memberPayment: any, setIconGreen: any}>(undefined);
 
     const handleMemberSubmit = async (memberFromForm: MemberProps) => {
         if (!groupId) return;
@@ -77,7 +78,7 @@ const Group = () => {
                         </Typography>
                         <Typography variant="overline" sx={{fontSize: "1em"}}>
                                 <b>$</b>{payments.reduce((prevPayment: number, currentPayment: GroupPaymentProps) => {
-                                return prevPayment + parseInt(currentPayment.total_amount);
+                                return prevPayment + parseFloat(currentPayment.total_amount);
                             }, 0)}
                         </Typography>
                     </Box>
@@ -97,6 +98,7 @@ const Group = () => {
                                         groupPayment={payPal.payment}
                                         memberPayment={payPal.memberPayment}
                                         member={payPal.member} 
+                                        setIconGreen={payPal.setIconGreen}
                                     />
                                 )}
                                 {addPayment && (
@@ -113,7 +115,9 @@ const Group = () => {
                                         payPayment={payPayment} 
                                         payment={paymentOpen} 
                                         members={members} 
-                                        openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, member: any) => setPaypal({payment, memberPayment, member})} 
+                                        openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, member: any, setIconGreen: any) => {
+                                            setPaypal({payment, memberPayment, member, setIconGreen});
+                                        }}
                                     />
                                 )}
                                 <PaymentsTable payments={payments} onClick={(groupPayment: GroupPaymentProps) => {
@@ -132,12 +136,7 @@ const Group = () => {
                 </Container>
             ) :
             (
-                <Backdrop
-                    sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                    open={!!group}
-                >
-                    <CircularProgress color="inherit" />
-                </Backdrop>
+                <Loading />
             )
     )
 }
