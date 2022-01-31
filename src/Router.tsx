@@ -8,13 +8,17 @@ import GroupPayment from "./GroupPayment";
 import Home from "./Home";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
+import Profile from "./Profile";
+import { UserTokenProps } from "./interfaces";
+import NotFound from "./NotFound";
 
 const Router: FC = () => {
-    const { user } = useContext(AppContext);
+    const { user }: {user: UserTokenProps | undefined} = useContext(AppContext);
     const paths: {path: string, signedIn: boolean, component: FC}[] = [
         {path: "/sign-up", signedIn: false, component: SignUp}, 
         {path: "/sign-in", signedIn: false, component: SignIn}, 
         {path: "/dashboard", signedIn: true, component: Dashboard},        
+        {path: "/profile/:email", signedIn: true, component: () => <Profile userContext={user} />},        
     ]
     return (
     <Routes>
@@ -36,7 +40,7 @@ const Router: FC = () => {
         {!user && <Route path="/" element={<Home/>} />} // Signed in are redirected to /dashboard
         {user && <Route path="/" element={<Navigate replace to={"/dashboard"}/>} />} // Signed in are redirected to /dashboard
         
-        <Route path="*" element={<Typography variant="h1" sx={{color: "gray", fontWeight: 600, marginTop: "25vh"}} textAlign={"center"}>404</Typography>} />
+        <Route path="*" element={<NotFound />} />
     </Routes>)
 
 } 
