@@ -52,9 +52,19 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
     );
 };
 
-const PaymentPopup = ({handleClose, payment, members, payPayment, openPayPal}: {handleClose: any, payment: GroupPaymentProps, members: any, payPayment: any, openPayPal: any}) => {
-    console.log("PAYMENT",payment)
-    console.log("MEMBERS",members)
+const PaymentPopup = ({
+        handleClose, 
+        payment,
+         members, 
+         payPayment, 
+         openPayPal
+    }: {
+        handleClose: any, 
+        payment: GroupPaymentProps, 
+        members: any, 
+        payPayment: any, 
+        openPayPal: any
+    }) => {
     const [memberPayments, setMemberPayments] = React.useState<MemberPaymentProps[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -129,7 +139,6 @@ const PaymentPopup = ({handleClose, payment, members, payPayment, openPayPal}: {
                                 key={memberPayment.member_id} 
                                 sx={{my: "1vh"}} 
                             >
-                                {console.log("PAYMENT", memberPayment)}
                                 <Box sx={{ p: 2, display: 'flex' }}>
                                     <Stack spacing={0.5}>
                                         <Typography fontWeight={500} variant="body1">{member.name}</Typography>
@@ -140,7 +149,11 @@ const PaymentPopup = ({handleClose, payment, members, payPayment, openPayPal}: {
                                     <IconButton 
                                         onClick={!memberPayment.paid ? handleClick : () => ""} 
                                         id={`paid-button-${memberPayment.member_id}`} 
-                                        sx={{marginRight: "-35vw"}}
+                                        sx={{
+                                            right: "2vw",
+                                            position: "absolute",
+                                            bottom: "9.5vh"
+                                        }}
                                     >
                                         <PaidIcon 
                                             sx={{color: memberPayment.paid ? "green" : "red"}} 
@@ -154,14 +167,14 @@ const PaymentPopup = ({handleClose, payment, members, payPayment, openPayPal}: {
                                         MenuListProps={{
                                             'aria-labelledby': `paid-button-${memberPayment.member_id}`,
                                         }}
-                                        sx={{marginRight: "-35vw"}}
+                                        // sx={{marginRight: "-35vw"}}
                                     >
                                         <MenuItem onClick={() => (handleCloseMenu(), setIconGreen(payment.id, memberPayment.member_id, idx))}>
                                             <Typography variant="subtitle2">
                                                 Mark paid
                                             </Typography>
                                         </MenuItem>
-                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(payment, memberPayment, member))}>
+                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(payment, memberPayment, member, () => setIconGreen(payment.id, memberPayment.member_id, idx)))}>
                                             <Typography variant="subtitle2">
                                                 Pay with
                                             </Typography>
