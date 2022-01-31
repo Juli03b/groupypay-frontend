@@ -1,5 +1,6 @@
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from "@mui/material";
 import { PayPalButton } from "react-paypal-button-v2";
+import { useAlert } from "./hooks";
 import { GroupPaymentProps, MemberPaymentProps } from "./interfaces";
 
 const PayPal = ({
@@ -7,9 +8,10 @@ const PayPal = ({
         handleClose,
         groupPayment,
         memberPayment,
-        member
-    }: {open: boolean, handleClose: any, groupPayment: GroupPaymentProps, memberPayment: MemberPaymentProps, member: any}) => {
-    
+        member,
+        setIconGreen
+    }: {open: boolean, handleClose: any, groupPayment: GroupPaymentProps, memberPayment: MemberPaymentProps, member: any, setIconGreen: any}) => {
+        const alert = useAlert();
         console.log(member, "MEMMEMEMME")
         return (
             <Dialog open={open} onClose={handleClose}>
@@ -22,6 +24,11 @@ const PayPal = ({
                     shippingPreference="NO_SHIPPING"
                     onSuccess={() => {
                         console.log("SUCCESS")
+                        setIconGreen();
+                    }}
+                    catchError={(error: any) => {
+                        console.error("Paypal error:", error);
+                        alert(error, "error")
                     }}
                 />
                 </DialogContentText>
