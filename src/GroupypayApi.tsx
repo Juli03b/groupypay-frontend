@@ -49,9 +49,9 @@ export default class GroupypayApi {
   }
   static async getUser(email: string) {
     // Get a user using their email
-    const response: AxiosResponse = await this.request(`/users/${email}`);
-    console.log("data from getUser", response.data)
-    return response.data
+    const response = await this.request(`/users/${email}`);
+    console.log("data from getUser", response)
+    return response
   }
   static async searchUsers(name: string) {
     // Search for users
