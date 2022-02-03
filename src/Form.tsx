@@ -1,11 +1,12 @@
 import { TextField, InputLabel, Grid, Typography } from "@mui/material";
 import { makeStyles } from '@mui/styles';
 import { Link } from "react-router-dom";
-import { FC } from "react";
+import { FC, useState } from "react";
 import { useAlert } from "./hooks";
 import { useFormik } from "formik";
 import * as yup from 'yup';
 import { SIGN_IN_INITIAL_STATE, PATCH_INITIAL_STATE, SIGN_UP_INITIAL_STATE } from "./constants";
+import Loading from "./Loading";
 
 interface FormProps {
     [index: string]: boolean | undefined | string | Function,
@@ -50,6 +51,7 @@ const Form: FC<FormProps> = (props: FormProps) => {
     const { password, name, phoneNumber, email, mode, buttonText, onSubmit }: FormProps = props;
     const alert = useAlert();
     const classes = useStyles();
+    const [isLoading, setIsLoading] = useState(false);
 
     if (mode === "signIn") {
         INITIAL_STATE = SIGN_IN_INITIAL_STATE;
@@ -65,104 +67,110 @@ const Form: FC<FormProps> = (props: FormProps) => {
     const formik = useFormik({
         initialValues: INITIAL_STATE,
         validationSchema: validationSchema,
-        onSubmit: (values) => {
-            onSubmit(values, (msg: any, type: any) => {
+        onSubmit: async (values) => {
+            console.log("LOADING", isLoading);
+            setIsLoading(true);
+            await onSubmit(values, (msg: any, type: any) => {
                 alert(msg, type);
             });
+            setIsLoading(false);
         }
     });
 
     return (
-        <form onSubmit={formik.handleSubmit}>
-            <div className="mx-auto">
-                <Grid
-                    container
-                    direction="row"
-                    justifyContent="flex-start"
-                    alignItems="flex-start"
-                    spacing={2}
-                >
-                    {email &&
-                        <Grid item xs={12}>
-                            <InputLabel htmlFor="email-input" className={classes.formLabel}>Enter email</InputLabel>
-                            <TextField
-                                error={formik.touched.email && !!formik.errors.email}
-                                value={formik.values.email}
-                                helperText={formik.touched.email && formik.errors.email}
-                                onChange={formik.handleChange}
-                                id="email-input"
-                                label="Email"
-                                name="email"
-                                type="email"
-                                variant="outlined"
-                                fullWidth
-                                required
-                            />
-                        </Grid>
-                    }
-                    {name &&
-                        <Grid item xs={12}>
-                            <InputLabel htmlFor="name-input" className={classes.formLabel}>Enter your name</InputLabel>
-                            <TextField
-                                error={formik.touched.name && !!formik.errors.name}
-                                value={formik.values.name}
-                                helperText={formik.touched.name && formik.errors.name}
-                                onChange={formik.handleChange}
-                                id="name-input"
-                                label="Name"
-                                name="name"
-                                type="name"
-                                variant="outlined"
-                                fullWidth
-                                required
-                            />
-                        </Grid>
-                    }
-                    {phoneNumber &&
-                        <Grid item xs={12}>
-                            <InputLabel htmlFor="phone-number-input" className={classes.formLabel}>Enter phone number</InputLabel>
-                            <TextField
-                                error={formik.touched.phoneNumber && !!formik.errors.phoneNumber}
-                                value={formik.values.phoneNumber}
-                                helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
-                                onChange={formik.handleChange}
-                                id="phone-number-input"
-                                label="Phone number"
-                                name="phoneNumber"
-                                type="phoneNumber"
-                                variant="outlined"
-                                autoFocus
-                                fullWidth
-                            />
-                        </Grid>
-                    }
-                    {password &&
-                        <Grid item xs={12}>
-                            <InputLabel htmlFor="password-input" className={classes.formLabel}>Enter {mode === "patch" && "new"} password</InputLabel>
-                            <TextField
-                                error={formik.touched.password && !!formik.errors.password}
-                                value={formik.values.password}
-                                helperText={formik.touched.password && formik.errors.password}
-                                onChange={formik.handleChange}
-                                id="password-input"
-                                label="Password"
-                                name="password"
-                                type="password"
-                                variant="outlined"
-                                fullWidth
-                                required
-                            />
-                            {mode === "signIn" &&
-                                <Typography variant="caption" className="fs-5">Or sign up <Link to="/sign-up">here</Link></Typography>}
-                        </Grid>
+        <>
+            {isLoading && <Loading />}
+            <form onSubmit={formik.handleSubmit}>
+                <div className="mx-auto">
+                    <Grid
+                        container
+                        direction="row"
+                        justifyContent="flex-start"
+                        alignItems="flex-start"
+                        spacing={2}
+                    >
+                        {email &&
+                            <Grid item xs={12}>
+                                <InputLabel htmlFor="email-input" className={classes.formLabel}>Enter email</InputLabel>
+                                <TextField
+                                    error={formik.touched.email && !!formik.errors.email}
+                                    value={formik.values.email}
+                                    helperText={formik.touched.email && formik.errors.email}
+                                    onChange={formik.handleChange}
+                                    id="email-input"
+                                    label="Email"
+                                    name="email"
+                                    type="email"
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                        }
+                        {name &&
+                            <Grid item xs={12}>
+                                <InputLabel htmlFor="name-input" className={classes.formLabel}>Enter your name</InputLabel>
+                                <TextField
+                                    error={formik.touched.name && !!formik.errors.name}
+                                    value={formik.values.name}
+                                    helperText={formik.touched.name && formik.errors.name}
+                                    onChange={formik.handleChange}
+                                    id="name-input"
+                                    label="Name"
+                                    name="name"
+                                    type="name"
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                />
+                            </Grid>
+                        }
+                        {phoneNumber &&
+                            <Grid item xs={12}>
+                                <InputLabel htmlFor="phone-number-input" className={classes.formLabel}>Enter phone number</InputLabel>
+                                <TextField
+                                    error={formik.touched.phoneNumber && !!formik.errors.phoneNumber}
+                                    value={formik.values.phoneNumber}
+                                    helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
+                                    onChange={formik.handleChange}
+                                    id="phone-number-input"
+                                    label="Phone number"
+                                    name="phoneNumber"
+                                    type="phoneNumber"
+                                    variant="outlined"
+                                    autoFocus
+                                    fullWidth
+                                />
+                            </Grid>
+                        }
+                        {password &&
+                            <Grid item xs={12}>
+                                <InputLabel htmlFor="password-input" className={classes.formLabel}>Enter {mode === "patch" && "new"} password</InputLabel>
+                                <TextField
+                                    error={formik.touched.password && !!formik.errors.password}
+                                    value={formik.values.password}
+                                    helperText={formik.touched.password && formik.errors.password}
+                                    onChange={formik.handleChange}
+                                    id="password-input"
+                                    label="Password"
+                                    name="password"
+                                    type="password"
+                                    variant="outlined"
+                                    fullWidth
+                                    required
+                                />
+                                {mode === "signIn" &&
+                                    <Typography variant="caption" className="fs-5">Or sign up <Link to="/sign-up">here</Link></Typography>}
+                            </Grid>
 
-                    }
-                    <Grid item xs={12}>
-                        <button type="submit" className="btn btn-md btn-outline-dark mb-3 mx-auto d-block">{buttonText}</button>
+                        }
+                        <Grid item xs={12}>
+                            <button type="submit" className="btn btn-md btn-outline-dark mb-3 mx-auto d-block">{buttonText}</button>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </div>
-        </form>
+                </div>
+            </form>
+        </>
     );
 }
 
