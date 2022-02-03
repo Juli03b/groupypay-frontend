@@ -80,6 +80,7 @@
     "@types/dateformat": "^5.0.0",
     "dateformat": "^5.0.2",
     "i": "^0.3.7",
+    "mini-css-extract-plugin": "2.4.5",
     "webpack": "^5.66.0"
   }
 }
