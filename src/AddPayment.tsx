@@ -36,20 +36,18 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
     },
     validationSchema: validationSchema,
     onSubmit: async ({name, total_amount, payInput, memberPaid}) => {
-      if (totalMemberPayment < parseInt(formik.values.total_amount)) {
+      if (totalMemberPayment < parseFloat(formik.values.total_amount)) {
         return;
       }
       try {
         await addPayment({name, total_amount}, payInput, memberPaid);
         alert("Payment added", "success");
-        
+        handleClose();
       } catch (error: any) {
         alert(error, "error")
       }
     },
   });
-
-
 
   const handleTotalAmountChange = (values: React.ChangeEvent<any>) => {
     // Handle changing total amount
@@ -201,7 +199,7 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
                   <Typography variant="caption">${totalMemberPayment}</Typography>
                   
                   {
-                    totalMemberPayment < parseInt(formik.values.total_amount) && (
+                    totalMemberPayment < parseFloat(formik.values.total_amount) && (
                       <Typography variant="caption" sx={{color: "#d32f2f"}}> will not cover ${formik.values.total_amount}</Typography>
                     )
                   }
