@@ -18,7 +18,7 @@ const Router: FC = () => {
         {path: "/sign-up", signedIn: false, component: SignUp}, 
         {path: "/sign-in", signedIn: false, component: SignIn}, 
         {path: "/dashboard", signedIn: true, component: Dashboard},        
-        {path: "/profile/:email", signedIn: true, component: () => <Profile userContext={user} />},        
+        {path: "/profile/:email", signedIn: true, component: () => <Profile />},        
     ]
     return (
     <Routes>
@@ -35,7 +35,7 @@ const Router: FC = () => {
              return <Route path={path.path} element={<path.component />} key={idx} />
 
         })}
-        {user && <Route path="/groups/:groupId/payments/:paymentId" element={<GroupPayment />} />}        
+        {user && <Route path="/users/:email/groups/:groupId/payments/:paymentId" element={<GroupPayment />} />}        
         {user && <Route path="/users/:email/groups/:groupId" element={<Group />} />}
         {!user && <Route path="/" element={<Home/>} />} // Signed in are redirected to /dashboard
         {user && <Route path="/" element={<Navigate replace to={"/dashboard"}/>} />} // Signed in are redirected to /dashboard
