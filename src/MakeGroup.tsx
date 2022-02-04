@@ -29,8 +29,9 @@ const MakeGroup: any = ({handleClose, open, addGroup}: {handleClose: any, open: 
     onSubmit: async (values) => {
       const group = await makeGroup(values);
       alert("Group created", "success");
-      console.log("NEW GROUP", group)
-      addGroup(group)
+      addGroup(group);
+      console.log("GROUP", group)
+      handleClose();
     },
   });
 
