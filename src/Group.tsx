@@ -1,7 +1,7 @@
 import { Add, ConstructionOutlined } from "@mui/icons-material";
 import { Backdrop, CircularProgress, Container, IconButton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
 import AddMember from "./AddMember";
 import AddPayment from "./AddPayment";
@@ -13,29 +13,34 @@ import { useAlert } from "./hooks";
 import PaymentPopup from "./PaymentPopup";
 import PayPal from "./PayPal";
 import Loading from "./Loading";
+import MemberPopup from "./MemberPopup";
+import AppContext from "./AppContext";
+import NotFound from "./NotFound";
 
 const Group = () => {
     const alert = useAlert();
-    const { groupId } = useParams();
+    const { email, groupId } = useParams();
+    const [loading, setLoading] = useState(false);
     const [group, setGroup] = useState<GroupProps | undefined>();
     const [members, setMembers] = useState<MemberProps>({});
     const [payments, setPayments] = useState<GroupPaymentProps[]>([]);
     const [addMember, setAddMember] = useState<boolean>(false);
     const [addPayment, setAddPayment] = useState<boolean>(false);
     const [paymentOpen, setPaymentOpen] = useState<GroupPaymentProps | undefined>(undefined);
-    const [payPal, setPaypal] = useState<undefined | {payment: any, member: any, memberPayment: any, setIconGreen: any}>(undefined);
+    const [memberOpen, setMemberOpen] = useState<any | undefined>(undefined);
+    const [payPal, setPaypal] = useState<undefined | {payment: any, memberPayee: any, memberPaying: any, memberPayment: any, setIconGreen: any}>(undefined);
 
     const handleMemberSubmit = async (memberFromForm: MemberProps) => {
-        if (!groupId) return;
-        const {member} = await GroupypayApi.addMember(groupId, memberFromForm);
+        if (!groupId || !email) return;
+        const {member} = await GroupypayApi.addMember(email, groupId, memberFromForm);
 
         setMembers((members) => ({...members, [member.id]: member}));
     }
 
     const handlePaymentSubmit = async (paymentFromForm: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) => {
-        if (!groupId) return;
+        if (!groupId || !email) return;
         try {
-            const payment = await GroupypayApi.addPayment(groupId, paymentFromForm, memberPayments, memberPaid);
+            const payment = await GroupypayApi.addPayment(email, groupId, paymentFromForm, memberPayments, memberPaid);
             setPayments(payments => [...payments, payment])
             
           } catch (error: any) {
@@ -44,33 +49,45 @@ const Group = () => {
     }
 
     const payPayment = async (groupPaymentId: number, memberId: number, setMemberPayments: any) => {
-        const message = await GroupypayApi.payPayment(groupId, groupPaymentId, memberId);
+        if (!email) return;
+        const message = await GroupypayApi.payPayment(email, groupId, groupPaymentId, memberId);
         alert(message, "success");
         setMemberPayments();
     }
 
     useEffect(() => {
-        if (!groupId) return;
+        if (!groupId || !email) return;
         const groupRes = async () => {
-            const group: GroupProps = await GroupypayApi.getGroup(groupId);
+            setLoading(true);
+            try {
+                const group: GroupProps = await GroupypayApi.getGroup(email, groupId);
 
-            setMembers(group.members)
-            setPayments(group.payments)
-            setGroup(group);
+                setMembers(group.members)
+                setPayments(group.payments)
+                setGroup(group);
+            } catch (error) {
+                
+            } finally {
+                setLoading(false);
+            }
+            
         }
         groupRes()
 
     }, [groupId])
 
     return (
+        <>
+        {loading ? <Loading /> : (
             group ? (
+                <>
                 <Container sx={{marginY: "10vh"}}>
                     <Box sx={{marginBottom: "10vh"}}>
                         <Typography variant="h1">{group?.name}</Typography>
                         <Typography variant="caption" sx={{color: (theme) => theme.palette.grey[700] , fontSize: "1.5em"}}>
                             {group.description}
                         </Typography> 
-                    </Box>
+                    </Box> 
                     
                     <Box>
                         <Typography variant="h6" textAlign="left">
@@ -97,7 +114,8 @@ const Group = () => {
                                         handleClose={() => setPaypal(undefined)}
                                         groupPayment={payPal.payment}
                                         memberPayment={payPal.memberPayment}
-                                        member={payPal.member} 
+                                        memberPayer={payPal.memberPaying}
+                                        memberPayee={payPal.memberPayee} 
                                         setIconGreen={payPal.setIconGreen}
                                     />
                                 )}
@@ -112,11 +130,11 @@ const Group = () => {
                                 {paymentOpen && (
                                     <PaymentPopup 
                                         handleClose={() => setPaymentOpen(undefined)} 
-                                        payPayment={payPayment} 
-                                        payment={paymentOpen} 
-                                        members={members} 
-                                        openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, member: any, setIconGreen: any) => {
-                                            setPaypal({payment, memberPayment, member, setIconGreen});
+                                        payPayment={payPayment}
+                                        payment={paymentOpen}
+                                        members={members}
+                                        openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, memberPayee: any, memberPaying: any, setIconGreen: any) => {
+                                            setPaypal({payment, memberPayee, memberPaying, memberPayment , setIconGreen});
                                         }}
                                     />
                                 )}
@@ -130,14 +148,31 @@ const Group = () => {
                     <Box>
                         <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Members</Typography>
                         <IconButton aria-label="add-member" onClick={() => setAddMember(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
+                        {memberOpen && (
+                            <MemberPopup 
+                                handleClose={() => setMemberOpen(undefined)}
+                                payPayment={payPayment}
+                                member={memberOpen}
+                                openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, memberPayee: any, memberPaying: any, setIconGreen: any) => {
+                                    setPaypal({payment, memberPayee, memberPaying, memberPayment , setIconGreen});
+                                }}
+                            />
+                        )}
                         {addMember && <AddMember handleClose={() => setAddMember(false)} open={addMember} addMember={handleMemberSubmit} />}
-                        {(members && !!Object.keys(members).length) && <MembersTable members={members} />  }
+                        {(members && !!Object.keys(members).length) && (
+                            <MembersTable members={members} onClick={(member: MemberProps) => {
+                                console.log("MEMMMEMMEBRRR!!!!", member)
+                                setMemberOpen(member)
+                            }} /> 
+                        )}
                     </Box>
                 </Container>
+                </>
             ) :
             (
-                <Loading />
-            )
+                <NotFound />
+        ))}
+        </>
     )
 }
 
