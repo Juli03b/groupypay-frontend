@@ -20,12 +20,13 @@ const useStyles = makeStyles({
 
 const SignIn: FC = () => {
     const { signIn } = useContext(AppContext);
-
-    const classes = useStyles()
+    const classes = useStyles();
     return (
         <Container maxWidth="md" className={classes.container}>
             <p>Sign Up</p>
             <Form email password buttonText="Sign in" mode="signIn" onSubmit={signIn} />            
-        </Container>);}
+        </Container>
+    );
+}
 
 export default SignIn;
