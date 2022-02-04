@@ -17,14 +17,17 @@ export interface UserPatchProps {
 export interface UserTokenProps {
     name: string,
     email: string,
+    groups?: GroupProps[],
     phoneNumber?: string,
 }
 export interface MemberProps {
     [id: number | string] : {
+        id: number,
         name: string,
         email: string,
         phone_number: string,
-        payments: MemberPaymentProps[]
+        payments: MemberPaymentProps[],
+        added_on: string
     }
 }
 export interface GroupPaymentProps {
