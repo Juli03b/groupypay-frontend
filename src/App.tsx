@@ -79,7 +79,7 @@ const App: FC = () => {
 
   // Sign in - use api to retrieve user token,
   // set token state, and set token in LocalStorage
-  const signIn = async (formData: UserSignInProps, setError: (msg: string) => void): Promise<void> => {
+  const signIn = async (formData: UserSignInProps, setError: (msg: string, state: string) => void): Promise<void> => {
     try {
       const {token, warning}: {token: string, warning: string | undefined} = await GroupypayApi.signIn(formData);
       setLocalStorageToken(token);
@@ -87,7 +87,7 @@ const App: FC = () => {
       navigate("/")
     } catch ([msg]: any) {
       if (typeof(msg) == "string") {
-        setError(msg);
+        setError(msg, "error");
       }
     }
   }
