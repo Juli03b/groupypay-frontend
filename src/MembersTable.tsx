@@ -1,6 +1,7 @@
-import { Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
+import { Link, Paper, styled, Table, TableBody, TableCell, tableCellClasses, TableContainer, TableHead, TableRow, Typography } from "@mui/material";
 import { FC, useEffect, useState } from "react";
 import { MemberPaymentProps, MemberProps } from "./interfaces";
+import { Link as rrdLink, Navigate } from "react-router-dom";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -32,14 +33,13 @@ function createData(
   return { id, name, email, phoneNumber, payments };
 }
 
-const MembersTable: FC<{members: MemberProps}> = ({members}) => {
+const MembersTable: FC<{members: MemberProps, onClick: any}> = ({members, onClick}) => {
 
     const [rows, setRows] = useState<any[]>([]);
 
     useEffect(() => {
         const rows = []
         for (let [memberId, member] of Object.entries(members)) {
-          console.log("member:", member);
           rows.push(createData(memberId, member.name, member.email, member.phone_number, member.payments.length));
         }
 
@@ -75,10 +75,12 @@ const MembersTable: FC<{members: MemberProps}> = ({members}) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              { rows ? rows.map((row) => (
+              { rows ? rows.map((row, index) => (
                 <StyledTableRow key={row.id}>
                   <StyledTableCell component="th" scope="row">
-                      <Typography variant="body1">{row.name}</Typography>
+                    <Link component={rrdLink} to={`#`} onClick={() => (onClick(members[row.id]))}>
+                        <Typography variant="body1">{row.name}</Typography>
+                    </Link>
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     <Typography variant="body1">{row.email}</Typography>
