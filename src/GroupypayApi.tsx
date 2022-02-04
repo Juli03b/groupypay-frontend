@@ -1,5 +1,6 @@
 import axios, { AxiosRequestHeaders, AxiosResponse, Method } from "axios";
-import { GroupCreateProps, GroupPaymentProps, GroupProps, MemberPaymentProps, MemberProps, UserCreateProps, UserPatchProps, UserSignInProps } from "./interfaces";
+import jwtDecode from "jwt-decode";
+import { GroupCreateProps, GroupPaymentProps, GroupProps, MemberPaymentProps, MemberProps, UserCreateProps, UserPatchProps, UserSignInProps, UserTokenProps } from "./interfaces";
 
 const BASE_URL = process.env.REACT_APP_BASE_URL || "http://127.0.0.1:5000";
 
@@ -13,6 +14,8 @@ const errorByPGCode: any =  {
 }
 export default class GroupypayApi {
   static token: string | null;
+  static user: UserTokenProps | null;
+  
 
   static async request(endpoint: string, data = {}, method: Method = "get") {
     console.debug("API Call:", endpoint, data, method);
@@ -50,7 +53,6 @@ export default class GroupypayApi {
   static async getUser(email: string) {
     // Get a user using their email
     const response = await this.request(`/users/${email}`);
-    console.log("data from getUser", response)
     return response
   }
   static async searchUsers(name: string) {
@@ -67,35 +69,38 @@ export default class GroupypayApi {
   }
 
   // Group Routes
+
   static async makeGroup(email: string, group: GroupCreateProps) {
     // Make a group for a user
-    const response: AxiosResponse = await this.request(`/users/${email}/groups`, group, "POST");
+    const response = await this.request(`/users/${email}/groups`, group, "POST");
     return response
   }
-  static async getGroup(id: string) {
+  static async getGroup(email: string, id: string) {
     // Get a group using an id
-    const response = await this.request(`/groups/${id}`);
+    const response = await this.request(`/users/${email}/groups/${id}`);
     return response
   }
-  static async addMember(groupId: string, {name, email, phone_number}: MemberProps) {
-    const response = await this.request(`/groups/${groupId}/members`, {name, email, ...{phone_number: phone_number || ""} }, "POST");
+  static async addMember(userEmail: string, groupId: string, {name, email, phone_number}: MemberProps) {
+    const response = await this.request(`/users/${userEmail}/groups/${groupId}/members`, {name, email, ...{phone_number: phone_number || ""} }, "POST");
     return response
   }
-  static async addPayment(groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) {
-    const response = await this.request(`/groups/${groupId}/payments`, {name, total_amount, member_payments: memberPayments, member_id: memberPaid}, "POST");
+  static async addPayment(email: string, groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) {
+    const response = await this.request(`/users/${email}/groups/${groupId}/payments`, {name, total_amount, member_payments: memberPayments, member_id: memberPaid}, "POST");
     console.log("ADD PAYMNT RES", response)
     return response
   }
-  static async getPayment(groupId: any, groupPaymentId: any) {
-    const response = await this.request(`/groups/${groupId}/payments/${groupPaymentId}`);
+  static async getPayment(email: string, groupId: any, groupPaymentId: any) {
+    const response = await this.request(`/users/${email}/groups/${groupId}/payments/${groupPaymentId}`);
     return response
   }
 
-  static async payPayment(groupId: any, groupPaymentId: any, memberId: any) {
-    const response = await this.request(`/groups/${groupId}/payments/${groupPaymentId}/member-payments/${memberId}/pay`, undefined, "POST")
+  static async payPayment(userEmail: string, groupId: any, groupPaymentId: any, memberId: any) {
+    console.log("HEROR!!! group id:", groupId, "group payment id", groupPaymentId, "member id", memberId);
+    const response = await this.request(`/users/${userEmail}/groups/${groupId}/payments/${groupPaymentId}/member-payments/${memberId}/pay`, undefined, "POST")
     return response
   }
   
 }
 
-GroupypayApi.token = localStorage.getItem("token") && JSON.parse(localStorage.getItem("token") || "") ;
+GroupypayApi.token = localStorage.getItem("token") && JSON.parse(localStorage.getItem("token") || "");
+GroupypayApi.user = GroupypayApi.token ? jwtDecode<any>(GroupypayApi.token).sub : null;
