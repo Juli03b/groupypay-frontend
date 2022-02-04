@@ -3,34 +3,33 @@ import { Box, Grid, Typography } from "@mui/material";
 import GroupypayApi from "./GroupypayApi";
 import { useParams } from "react-router";
 import Loading from "./Loading";
-import { UserTokenProps } from "./interfaces";
+import { GroupProps, UserTokenProps } from "./interfaces";
 import NotFound from "./NotFound";
+import GroupsTable from "./GroupsTable";
 
-const Profile = ({userContext}: {userContext: UserTokenProps | undefined}) => {
+const Profile = () => {
     const [user, setUser] = useState<UserTokenProps | undefined | false>(undefined);
+    const [groups, setGroups] = useState<GroupProps[] | undefined>();
     const { email } = useParams();
 
     useEffect(() => {
-        if (userContext?.email == email) {
-            setUser(userContext);
-        }else if ((!user) && email) {
-
+        if (email) {
             const getUser = async () => {
                 try {
                     const user = await GroupypayApi.getUser(email);
+                    if (user && user?.groups) {
+                        setGroups(user.groups);
+                    }
                     setUser(user);
                 } catch (error: any) {
                     setUser(false);
-
                 }
             }
             
             getUser();
-        }else {
-            setUser(false);
         }
-    }, [user]);
-
+        
+    }, []);
 
 
     if (user){
@@ -40,16 +39,23 @@ const Profile = ({userContext}: {userContext: UserTokenProps | undefined}) => {
                 alignItems={"center"}
                 justifyContent={"space-around"}
                 minHeight={"70vh"}
+                marginY={"5vh"}
                 spacing={2}
             >
-                <Grid item xs={12} xl={6}>
-                    <Typography variant="h3">{user.name}</Typography>
+                {console.log(user)}
+                <Grid item xs={6} xl={4}>
+                    <Typography variant="h3" textAlign={"center"}>{user.name}</Typography>
                 </Grid>
-                <Grid item xs={12} xl={4}>
-                    <Box textAlign={"center"}>
-                        <Typography variant="h3">Organize and divvy up group payments quickly</Typography>
-                    </Box>
+
+                <Grid item xs={12} xl={4} textAlign={"center"}>
+                        <Typography variant="h4">{user.email}</Typography>
+                        <Typography variant="h4">3233232</Typography>
                 </Grid>
+                {!!groups && (
+                    <Grid item xs={12} textAlign={"center"}>
+                        <GroupsTable groups={groups} email={user.email} />
+                    </Grid>
+                )}
             </Grid>
         )
     }else if(user == undefined){
