@@ -53,18 +53,18 @@ const BootstrapDialogTitle = (props: DialogTitleProps) => {
 };
 
 const PaymentPopup = ({
-        handleClose, 
-        payment,
-         members, 
-         payPayment, 
-         openPayPal
-    }: {
-        handleClose: any, 
-        payment: GroupPaymentProps, 
-        members: any, 
-        payPayment: any, 
-        openPayPal: any
-    }) => {
+    handleClose, 
+    payment,
+    members, 
+    payPayment, 
+    openPayPal
+}: {
+    handleClose: any, 
+    payment: GroupPaymentProps, 
+    members: any, 
+    payPayment: any, 
+    openPayPal: any
+}) => {
     const [memberPayments, setMemberPayments] = React.useState<MemberPaymentProps[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
@@ -85,7 +85,7 @@ const PaymentPopup = ({
     }
     
     React.useEffect(() => {
-        setMemberPayments(payment.member_payments || [])
+        setMemberPayments(payment.member_payments || []);
     }, [])
 
     return (
@@ -134,6 +134,7 @@ const PaymentPopup = ({
                 <Box>
                     {memberPayments.map((memberPayment, idx) => {
                         const member = members[memberPayment.member_id]
+
                         return (
                             <Card 
                                 key={memberPayment.member_id} 
@@ -146,19 +147,22 @@ const PaymentPopup = ({
                                             ${memberPayment.amount}
                                         </Typography>
                                     </Stack>
-                                    <IconButton 
-                                        onClick={!memberPayment.paid ? handleClick : () => ""} 
-                                        id={`paid-button-${memberPayment.member_id}`} 
-                                        sx={{
-                                            right: "2vw",
-                                            position: "absolute",
-                                            bottom: "9.5vh"
-                                        }}
-                                    >
-                                        <PaidIcon 
-                                            sx={{color: memberPayment.paid ? "green" : "red"}} 
-                                        />
-                                    </IconButton>
+
+                                        <IconButton 
+                                            onClick={!memberPayment.paid ? handleClick : () => ""} 
+                                            id={`paid-button-${memberPayment.member_id}`} 
+                                            sx={{
+                                                position: "absolute",
+                                                right: "30px",
+                                                // bottom: "9.5vh"
+                                            }}
+                                        >
+                                            <PaidIcon 
+                                                sx={{color: memberPayment.paid ? "green" : "red"}} 
+                                            />
+                                        </IconButton>
+                                    <Divider />
+
                                     <Menu
                                         id={`menu-${memberPayment.member_id}`}
                                         anchorEl={anchorEl}
@@ -174,7 +178,7 @@ const PaymentPopup = ({
                                                 Mark paid
                                             </Typography>
                                         </MenuItem>
-                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(payment, memberPayment, member, () => setIconGreen(payment.id, memberPayment.member_id, idx)))}>
+                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(payment, memberPayment, members[payment.member_id], member, () => setIconGreen(payment.id, memberPayment.member_id, idx)))}>
                                             <Typography variant="subtitle2">
                                                 Pay with
                                             </Typography>
@@ -182,7 +186,6 @@ const PaymentPopup = ({
                                         </MenuItem>
                                     </Menu>
                                 </Box>
-                                <Divider />
                             </Card>
                         );
                     })}
