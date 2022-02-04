@@ -117,11 +117,9 @@ const MemberPopup: FC<{
                 {/* Member Payments */}
                 <Box>
                     {memberPayments.map((memberPayment: any, idx: number) => {
-                        // const member = members[memberPayment.member_id]
-                        console.log("MEMMMMPAY", memberPayment)
                         return (
                             <Card 
-                                key={memberPayment.member_id} 
+                                key={(memberPayment.member_id / idx)} 
                                 sx={{my: "1vh"}} 
                             >
                                 <Box sx={{ p: 2, display: 'flex' }}>
@@ -133,15 +131,15 @@ const MemberPopup: FC<{
                                     </Stack>
                                     <IconButton 
                                         onClick={!memberPayment.paid ? handleClick : () => ""} 
-                                        id={`paid-button-${memberPayment.member_id}`} 
+                                        id={`paid-button-${memberPayment.member_id / idx}`} 
                                         sx={{
-                                            right: "2vw",
                                             position: "absolute",
-                                            bottom: "9.5vh"
+                                            right: "30px",
+                                            marginTop: "5px"
                                         }}
                                     >
                                         <PaidIcon 
-                                            sx={{color: (memberPayment.paid || memberPayment.member_id == member.id) ? "green" : "red"}} 
+                                            sx={{color: memberPayment.paid ? "green" : "red"}} 
                                         />
                                     </IconButton>
                                     <Menu
@@ -152,9 +150,8 @@ const MemberPopup: FC<{
                                         MenuListProps={{
                                             'aria-labelledby': `paid-button-${memberPayment.member_id}`,
                                         }}
-                                        // sx={{marginRight: "-35vw"}}
                                     >
-                                        <MenuItem onClick={() => (handleCloseMenu(), setIconGreen(0, memberPayment.member_id, idx))}>
+                                        <MenuItem onClick={() => (handleCloseMenu(), setIconGreen(memberPayment.group_payment_id, memberPayment.member_id, idx))}>
                                             <Typography variant="subtitle2">
                                                 Mark paid
                                             </Typography>
