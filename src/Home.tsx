@@ -14,6 +14,7 @@ const Home: FC = () => {
             justifyContent={"space-around"}
             minHeight={"70vh"}
             spacing={2}
+            textAlign={"center"}
         >
             <Grid item xs={12} xl={6}>
                 <StyledHeader variant="h1">Make your <b style={{fontSize: "70%", display:"block"}}>groupypayments</b> easier!</StyledHeader>
