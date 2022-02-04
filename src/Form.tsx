@@ -68,12 +68,17 @@ const Form: FC<FormProps> = (props: FormProps) => {
         initialValues: INITIAL_STATE,
         validationSchema: validationSchema,
         onSubmit: async (values) => {
-            console.log("LOADING", isLoading);
             setIsLoading(true);
-            await onSubmit(values, (msg: any, type: any) => {
-                alert(msg, type);
-            });
-            setIsLoading(false);
+            try {
+                await onSubmit(values, (msg: any, type: any) => {
+                    alert(msg, type);
+                });
+            } catch (error: any) {
+                // alert
+            } finally {
+                setIsLoading(false);
+
+            }
         }
     });
 
