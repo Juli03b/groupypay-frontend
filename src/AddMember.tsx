@@ -36,6 +36,7 @@ const AddMember: any = ({handleClose, open, addMember}: {handleClose: any, open:
         await addMember(values);
         
         alert("Member created", "success");
+        handleClose();
       } catch (errors: any) {
         for (const error of errors) {
           alert(error, "error")
