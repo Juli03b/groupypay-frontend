@@ -16,29 +16,35 @@ const PayPal = ({
         handleClose: any, 
         groupPayment: GroupPaymentProps, 
         memberPayment: MemberPaymentProps, 
-        memberPayer: MemberProps, 
-        memberPayee: MemberProps, 
+        memberPayer: MemberProps[any], 
+        memberPayee: MemberProps[any], 
         setIconGreen: any
     }) => {
         // info required: payee, payer, memberPayment, groupPayment
         const alert = useAlert();
-
+        console.log("Member payment:", memberPayment)
+        console.log("Member payee:", memberPayee)
+        console.log("Member payer:", memberPayer)
         return (
             <Dialog open={open} onClose={handleClose}>
             <DialogTitle>Pay {memberPayee.name}</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     <PayPalButton 
-                    amount={2}
-                    currency={"USD"}
-                    shippingPreference="NO_SHIPPING"
-                    onSuccess={() => {
-                        setIconGreen();
-                    }}
-                    catchError={(error: any) => {
-                        alert(error, "error")
-                    }}
-                />
+                        amount={memberPayment.amount}
+                        currency={"USD"}
+                        shippingPreference="NO_SHIPPING"
+                        onSuccess={() => {
+                            setIconGreen();
+                            handleClose();
+                        }}
+                        catchError={(error: any) => {
+                            alert(error, "error")
+                        }}
+                        options={{
+                            merchantId: memberPayee.email
+                        }}
+                    />
                 </DialogContentText>
                 <DialogActions>
                 <Button onClick={handleClose}>Cancel</Button>
