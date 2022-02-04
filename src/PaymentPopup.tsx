@@ -178,7 +178,7 @@ const PaymentPopup = ({
                                                 Mark paid
                                             </Typography>
                                         </MenuItem>
-                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(payment, memberPayment, members[payment.member_id], member, () => setIconGreen(payment.id, memberPayment.member_id, idx)))}>
+                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(payment, memberPayment, members[payment.member_id], member, () => (setIconGreen(payment.id, memberPayment.member_id, idx))))}>
                                             <Typography variant="subtitle2">
                                                 Pay with
                                             </Typography>
