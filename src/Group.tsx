@@ -51,7 +51,7 @@ const Group = () => {
     const payPayment = async (groupPaymentId: number, memberId: number, setMemberPayments: any) => {
         if (!email) return;
         const message = await GroupypayApi.payPayment(email, groupId, groupPaymentId, memberId);
-        alert(message, "success");
+        // alert(message, "success");
         setMemberPayments();
     }
 
@@ -75,105 +75,98 @@ const Group = () => {
         groupRes()
 
     }, [groupId])
-
+    if (loading) return <Loading /> ;
     return (
-        <>
-        {loading ? <Loading /> : (
-            group ? (
-                <>
-                <Container sx={{marginY: "10vh"}}>
-                    <Box sx={{marginBottom: "10vh"}}>
-                        <Typography variant="h1">{group?.name}</Typography>
-                        <Typography variant="caption" sx={{color: (theme) => theme.palette.grey[700] , fontSize: "1.5em"}}>
-                            {group.description}
-                        </Typography> 
-                    </Box> 
-                    
-                    <Box>
-                        <Typography variant="h6" textAlign="left">
-                            The group has spent a total of 
-                        </Typography>
-                        <Typography variant="overline" sx={{fontSize: "1em"}}>
-                                <b>$</b>{payments.reduce((prevPayment: number, currentPayment: GroupPaymentProps) => {
-                                return prevPayment + parseFloat(currentPayment.total_amount);
-                            }, 0)}
-                        </Typography>
-                    </Box>
-
-                    <hr />
-
-                    {/* Payments */}
-                    {
-                        (members && !!(Object.keys(members).length)) && (
-                            <Box sx={{marginY: "2.5vh"}}>
-                                <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Add expense</Typography>
-                                <IconButton aria-label="add-member" onClick={() => setAddPayment(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
-                                {!!payPal && (
-                                    <PayPal 
-                                        open={!!payPal} 
-                                        handleClose={() => setPaypal(undefined)}
-                                        groupPayment={payPal.payment}
-                                        memberPayment={payPal.memberPayment}
-                                        memberPayer={payPal.memberPaying}
-                                        memberPayee={payPal.memberPayee} 
-                                        setIconGreen={payPal.setIconGreen}
-                                    />
-                                )}
-                                {addPayment && (
-                                    <AddPayment 
-                                        handleClose={() => setAddPayment(false)} 
-                                        open={addPayment} 
-                                        addPayment={handlePaymentSubmit} 
-                                        members={members} 
-                                    />
-                                )}
-                                {paymentOpen && (
-                                    <PaymentPopup 
-                                        handleClose={() => setPaymentOpen(undefined)} 
-                                        payPayment={payPayment}
-                                        payment={paymentOpen}
-                                        members={members}
-                                        openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, memberPayee: any, memberPaying: any, setIconGreen: any) => {
-                                            setPaypal({payment, memberPayee, memberPaying, memberPayment , setIconGreen});
-                                        }}
-                                    />
-                                )}
-                                <PaymentsTable payments={payments} onClick={(groupPayment: GroupPaymentProps) => {
-                                    setPaymentOpen(groupPayment)
-                                }
-                                }/>
-                            </Box>
+        group ? (
+            <>
+            <Container sx={{marginY: "10vh"}}>
+                <Box sx={{marginBottom: "10vh"}}>
+                    <Typography variant="h1">{group?.name}</Typography>
+                    <Typography variant="caption" sx={{color: (theme) => theme.palette.grey[700] , fontSize: "1.5em"}}>
+                        {group.description}
+                    </Typography> 
+                </Box> 
+                
+                <Box>
+                    <Typography variant="h6" textAlign="left">
+                        The group has spent a total of 
+                    </Typography>
+                    <Typography variant="overline" sx={{fontSize: "1em"}}>
+                            <b>$</b>{payments.reduce((prevPayment: number, currentPayment: GroupPaymentProps) => {
+                            return prevPayment + parseFloat(currentPayment.total_amount);
+                        }, 0)}
+                    </Typography>
+                </Box>
+                <hr />
+                {/* Payments */}
+                {
+                    (members && !!(Object.keys(members).length)) && (
+                        <Box sx={{marginY: "2.5vh"}}>
+                            <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Add expense</Typography>
+                            <IconButton aria-label="add-member" onClick={() => setAddPayment(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
+                            {!!payPal && (
+                                <PayPal 
+                                    open={!!payPal} 
+                                    handleClose={() => setPaypal(undefined)}
+                                    groupPayment={payPal.payment}
+                                    memberPayment={payPal.memberPayment}
+                                    memberPayer={payPal.memberPaying}
+                                    memberPayee={payPal.memberPayee} 
+                                    setIconGreen={payPal.setIconGreen}
+                                />
+                            )}
+                            {addPayment && (
+                                <AddPayment 
+                                    handleClose={() => setAddPayment(false)} 
+                                    open={addPayment} 
+                                    addPayment={handlePaymentSubmit} 
+                                    members={members} 
+                                />
+                            )}
+                            {paymentOpen && (
+                                <PaymentPopup 
+                                    handleClose={() => setPaymentOpen(undefined)} 
+                                    payPayment={payPayment}
+                                    payment={paymentOpen}
+                                    members={members}
+                                    openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, memberPayee: any, memberPaying: any, setIconGreen: any) => {
+                                        setPaypal({payment, memberPayee, memberPaying, memberPayment , setIconGreen});
+                                    }}
+                                />
+                            )}
+                            <PaymentsTable payments={payments} onClick={(groupPayment: GroupPaymentProps) => {
+                                setPaymentOpen(groupPayment)
+                            }
+                            }/>
+                        </Box>
+                )}
+                {/* Members */}
+                <Box>
+                    <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Members</Typography>
+                    <IconButton aria-label="add-member" onClick={() => setAddMember(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
+                    {memberOpen && (
+                        <MemberPopup 
+                            handleClose={() => setMemberOpen(undefined)}
+                            payPayment={payPayment}
+                            member={memberOpen}
+                            openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, memberPayee: any, memberPaying: any, setIconGreen: any) => {
+                                setPaypal({payment, memberPayee, memberPaying, memberPayment , setIconGreen});
+                            }}
+                        />
                     )}
-                    {/* Members */}
-                    <Box>
-                        <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Members</Typography>
-                        <IconButton aria-label="add-member" onClick={() => setAddMember(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
-                        {memberOpen && (
-                            <MemberPopup 
-                                handleClose={() => setMemberOpen(undefined)}
-                                payPayment={payPayment}
-                                member={memberOpen}
-                                openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, memberPayee: any, memberPaying: any, setIconGreen: any) => {
-                                    setPaypal({payment, memberPayee, memberPaying, memberPayment , setIconGreen});
-                                }}
-                            />
-                        )}
-                        {addMember && <AddMember handleClose={() => setAddMember(false)} open={addMember} addMember={handleMemberSubmit} />}
-                        {(members && !!Object.keys(members).length) && (
-                            <MembersTable members={members} onClick={(member: MemberProps) => {
-                                console.log("MEMMMEMMEBRRR!!!!", member)
-                                setMemberOpen(member)
-                            }} /> 
-                        )}
-                    </Box>
-                </Container>
-                </>
-            ) :
-            (
-                <NotFound />
-        ))}
-        </>
-    )
+                    {addMember && <AddMember handleClose={() => setAddMember(false)} open={addMember} addMember={handleMemberSubmit} />}
+                    {(members && !!Object.keys(members).length) && (
+                        <MembersTable members={members} onClick={(member: MemberProps) => {
+                            setMemberOpen(member)
+                        }} /> 
+                    )}
+                </Box>
+            </Container>
+            </>
+        ) :
+        (
+            <NotFound />
+        ));
 }
 
 export default Group;
