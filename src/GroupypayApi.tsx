@@ -9,9 +9,11 @@ const BASE_URL = process.env.REACT_APP_BASE_URL || "http://127.0.0.1:5000";
  * Static class tying together methods used to get/send to to the API.
  *
  */
+
 const errorByPGCode: any =  {
   "23505": "User under that email or phone number already exists",
 }
+
 export default class GroupypayApi {
   static token: string | null;
   static user: UserTokenProps | null;
@@ -21,7 +23,7 @@ export default class GroupypayApi {
     console.debug("API Call:", endpoint, data, method);
 
     const url = `${BASE_URL}${endpoint}`;
-    const headers: AxiosRequestHeaders = { Authorization: `Bearer ${this.token}`, "Access-Control-Allow-Origin": BASE_URL};
+    const headers: AxiosRequestHeaders = { Authorization: `Bearer ${this.token}`};
     const params = (method === "get")
         ? data
         : {};
@@ -86,7 +88,7 @@ export default class GroupypayApi {
   }
   static async addPayment(email: string, groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) {
     const response = await this.request(`/users/${email}/groups/${groupId}/payments`, {name, total_amount, member_payments: memberPayments, member_id: memberPaid}, "POST");
-    console.log("ADD PAYMNT RES", response)
+
     return response
   }
   static async getPayment(email: string, groupId: any, groupPaymentId: any) {
@@ -95,7 +97,6 @@ export default class GroupypayApi {
   }
 
   static async payPayment(userEmail: string, groupId: any, groupPaymentId: any, memberId: any) {
-    console.log("HEROR!!! group id:", groupId, "group payment id", groupPaymentId, "member id", memberId);
     const response = await this.request(`/users/${userEmail}/groups/${groupId}/payments/${groupPaymentId}/member-payments/${memberId}/pay`, undefined, "POST")
     return response
   }
