@@ -9,6 +9,7 @@
     "@mui/icons-material": "^5.3.0",
     "@mui/material": "^5.2.8",
     "@mui/styles": "^5.3.0",
+    "@paypal/react-paypal-js": "^7.6.0",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@testing-library/user-event": "^13.5.0",
@@ -36,9 +37,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "storybook": "start-storybook -p 6006 -s public",
-    "build-storybook": "build-storybook -s public"
+    "eject": "react-scripts eject"
   },
   "eslintConfig": {
     "extends": [
@@ -69,14 +68,6 @@
     ]
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^6.4.13",
-    "@storybook/addon-essentials": "^6.4.13",
-    "@storybook/addon-links": "^6.4.13",
-    "@storybook/builder-webpack5": "^6.4.13",
-    "@storybook/manager-webpack5": "^6.4.13",
-    "@storybook/node-logger": "^6.4.13",
-    "@storybook/preset-create-react-app": "^4.0.0",
-    "@storybook/react": "^6.4.13",
     "@types/dateformat": "^5.0.0",
     "dateformat": "^5.0.2",
     "i": "^0.3.7",
