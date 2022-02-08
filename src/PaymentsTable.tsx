@@ -69,7 +69,7 @@ const PaymentsTable = ({payments, onClick}: {payments: GroupPaymentProps[], onCl
                     </StyledTableCell>
                     <StyledTableCell align="right">
                       <Typography variant="body1">
-                        {row.total_amount}
+                        $ {row.total_amount}
                       </Typography>
                     </StyledTableCell>
                   </StyledTableRow>
