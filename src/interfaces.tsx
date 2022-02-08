@@ -44,6 +44,7 @@ export interface MemberPaymentProps {
     member_id: number,
     amount: number,
     paid: boolean,
+    group_payment: GroupPaymentProps,
     
 }
 
