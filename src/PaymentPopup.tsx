@@ -152,9 +152,8 @@ const PaymentPopup = ({
                                             onClick={!memberPayment.paid ? handleClick : () => ""} 
                                             id={`paid-button-${memberPayment.member_id}`} 
                                             sx={{
-                                                position: "absolute",
-                                                right: "30px",
-                                                // bottom: "9.5vh"
+                                                justifySelf: "self-start"
+                                                
                                             }}
                                         >
                                             <PaidIcon 
