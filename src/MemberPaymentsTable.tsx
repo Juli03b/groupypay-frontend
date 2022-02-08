@@ -73,7 +73,7 @@ const MemberPaymentsTable = ({payments}: {payments: any}) => {
                   </StyledTableCell>
                   <StyledTableCell align="right">
                     <Typography variant="body1">
-                      {row.total_amount}
+                      $ {row.total_amount}
                     </Typography>
                   </StyledTableCell>
                 </StyledTableRow>
