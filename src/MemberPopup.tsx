@@ -114,6 +114,7 @@ const MemberPopup: FC<{
                         {member.phone_number || "Not provided"}  
                     </Typography>
                 </Box>
+
                 {/* Member Payments */}
                 <Box>
                     {memberPayments.map((memberPayment: any, idx: number) => {
@@ -122,9 +123,9 @@ const MemberPopup: FC<{
                                 key={(memberPayment.member_id / idx)} 
                                 sx={{my: "1vh"}} 
                             >
-                                <Box sx={{ p: 2, display: 'flex' }}>
+                                <Box sx={{ p: 2, display: 'flex'}}>
                                     <Stack spacing={0.5}>
-                                        <Typography fontWeight={500} variant="body1">{member.name}</Typography>
+                                        <Typography fontWeight={500} variant="body1">{memberPayment.group_payment.name}</Typography>
                                         <Typography variant="body2" color="text.secondary">
                                             ${memberPayment.amount}
                                         </Typography>
@@ -133,9 +134,7 @@ const MemberPopup: FC<{
                                         onClick={!memberPayment.paid ? handleClick : () => ""} 
                                         id={`paid-button-${memberPayment.member_id / idx}`} 
                                         sx={{
-                                            position: "absolute",
-                                            right: "30px",
-                                            marginTop: "5px"
+                                            display: "flex-root"
                                         }}
                                     >
                                         <PaidIcon 
