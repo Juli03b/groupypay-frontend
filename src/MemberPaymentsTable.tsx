@@ -47,7 +47,6 @@ const MemberPaymentsTable = ({payments}: {payments: any}) => {
 
     return (
         <TableContainer component={Paper}>
-          {console.log(payments)}
           <Table sx={{ minWidth: 500 }} aria-label="customized table">
             <TableHead>
               <TableRow>
