@@ -107,6 +107,7 @@ const Form: FC<FormProps> = (props: FormProps) => {
                                     name="email"
                                     type="email"
                                     variant="outlined"
+                                    autoFocus
                                     fullWidth
                                     required
                                 />
@@ -143,7 +144,6 @@ const Form: FC<FormProps> = (props: FormProps) => {
                                     name="phoneNumber"
                                     type="phoneNumber"
                                     variant="outlined"
-                                    autoFocus
                                     fullWidth
                                 />
                             </Grid>
