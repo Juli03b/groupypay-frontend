@@ -68,7 +68,8 @@ const PaymentPopup = ({
     const [memberPayments, setMemberPayments] = React.useState<MemberPaymentProps[]>([]);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
-
+    console.log("members", members)
+    console.log("payment", payment)
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -76,6 +77,7 @@ const PaymentPopup = ({
         setAnchorEl(null);
     };
     const setIconGreen = (paymentId: number, memberId: number, idx: number) => {
+        console.log("paypal", paymentId, memberId, idx)
         payPayment(paymentId, memberId, () => {
             setMemberPayments((payments: any) => {
                 payments[idx].paid = true
@@ -137,7 +139,7 @@ const PaymentPopup = ({
 
                         return (
                             <Card 
-                                key={memberPayment.member_id} 
+                                key={memberPayment.member_id / idx} 
                                 sx={{my: "1vh"}} 
                             >
                                 <Box sx={{ p: 2, display: 'flex' }}>
@@ -153,7 +155,6 @@ const PaymentPopup = ({
                                             id={`paid-button-${memberPayment.member_id}`} 
                                             sx={{
                                                 justifySelf: "self-start"
-                                                
                                             }}
                                         >
                                             <PaidIcon 
@@ -172,12 +173,24 @@ const PaymentPopup = ({
                                         }}
                                         // sx={{marginRight: "-35vw"}}
                                     >
-                                        <MenuItem onClick={() => (handleCloseMenu(), setIconGreen(payment.id, memberPayment.member_id, idx))}>
+                                        <MenuItem 
+                                            onClick={() => {
+                                                handleCloseMenu();
+                                                setIconGreen(payment.id, memberPayment.member_id, idx);
+                                            }}
+                                        >
                                             <Typography variant="subtitle2">
                                                 Mark paid
                                             </Typography>
                                         </MenuItem>
-                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(payment, memberPayment, members[payment.member_id], member, () => (setIconGreen(payment.id, memberPayment.member_id, idx))))}>
+                                        <MenuItem 
+                                            onClick={() => {
+                                                handleCloseMenu();
+                                                openPayPal(payment, memberPayment, members[payment.member_id], member, () => {
+                                                    setIconGreen(payment.id, memberPayment.member_id, idx);
+                                                });
+                                            }}        
+                                        >
                                             <Typography variant="subtitle2">
                                                 Pay with
                                             </Typography>
