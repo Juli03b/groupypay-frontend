@@ -55,7 +55,7 @@ const PayPal = ({
                                 });
                             }}
                             onError={(error: any) => {
-                                alert(`${memberPayee.name}'s account is restricted`, "error")
+                                alert(`${memberPayee.name}'s account is restricted or email is invalid`, "error")
                                 
                             }}
                             onApprove={(data: any, actions: any) => {
