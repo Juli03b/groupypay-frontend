@@ -1,4 +1,4 @@
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import { FC, useContext } from "react";
 import AppContext from "./AppContext";
@@ -23,7 +23,7 @@ const SignUp: FC = () => {
 
     return (
         <Container maxWidth="md" className={classes.container}>
-            <p>Sign in</p>
+            <Typography my={"1vh"} variant="h6">Sign up</Typography>
             <Form password name phoneNumber email signUp buttonText="Sign up" mode="signUp" onSubmit={(signUp)} />
         </Container>);
 }

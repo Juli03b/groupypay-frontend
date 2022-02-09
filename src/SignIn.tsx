@@ -1,7 +1,7 @@
 import { FC, useContext } from "react";
 import Form from "./Form";
 import { makeStyles } from "@mui/styles";
-import { Container } from "@mui/material";
+import { Container, Typography } from "@mui/material";
 import AppContext from "./AppContext";
 
 const useStyles = makeStyles({
@@ -23,7 +23,7 @@ const SignIn: FC = () => {
     const classes = useStyles();
     return (
         <Container maxWidth="md" className={classes.container}>
-            <p>Sign Up</p>
+            <Typography my={"1vh"} variant="h6">Sign in</Typography>
             <Form email password buttonText="Sign in" mode="signIn" onSubmit={signIn} />            
         </Container>
     );
