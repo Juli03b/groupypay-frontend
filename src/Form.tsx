@@ -164,8 +164,14 @@ const Form: FC<FormProps> = (props: FormProps) => {
                                     fullWidth
                                     required
                                 />
-                                {mode === "signIn" &&
-                                    <Typography variant="caption" className="fs-5">Or sign up <Link to="/sign-up">here</Link></Typography>}
+                                {(mode == "signIn" || mode == "signUp") &&
+                                    <Typography variant="caption" className="fs-5">
+                                        Or {mode == "signUp" ? "sign in " : "sign up "} 
+                                        <Link to={mode == "signUp" ? "/sign-in" : "/sign-up"}>
+                                            here
+                                        </Link>
+                                    </Typography>
+                                }
                             </Grid>
 
                         }
