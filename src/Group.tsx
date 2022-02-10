@@ -51,7 +51,7 @@ const Group = () => {
     const payPayment = async (groupPaymentId: number, memberId: number, setMemberPayments: any) => {
         if (!email) return;
         const message = await GroupypayApi.payPayment(email, groupId, groupPaymentId, memberId);
-        // alert(message, "success");
+        alert(message + " " +memberId, "success");
         setMemberPayments();
     }
 
