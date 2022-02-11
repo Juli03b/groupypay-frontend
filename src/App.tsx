@@ -125,12 +125,11 @@ const App: FC = () => {
   const makeGroup = async (groupFromForm: GroupCreateProps) => {
     if (!user) return;
     try{
-      console.log(groupFromForm)
       const group = await GroupypayApi.makeGroup(user?.email, groupFromForm);
       return group;
 
     }catch(msg){
-      console.log("msg", msg)
+      console.error("msg", msg)
       
     }
   }

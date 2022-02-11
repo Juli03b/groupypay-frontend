@@ -71,7 +71,6 @@ const PaymentPopup = ({
     const open = Boolean(anchorEl);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        console.log(event.currentTarget)
         setAnchorEl(event.currentTarget);
     };
     const handleCloseMenu = () => {
@@ -80,10 +79,8 @@ const PaymentPopup = ({
     const setIconGreen = (paymentId: number, memberId: number) => {
         payPayment(paymentId, memberId, () => {
             setMemberPayments((payments: any) => {
-                console.log("payments", payments)
                 payments.forEach((payment: MemberPaymentProps) => {
                     if (payment.member_id == memberId) {
-                        // console.log("PAYMENT!!!!", payment)
                         payment.paid = true;
                     }
                 });
@@ -151,7 +148,6 @@ const PaymentPopup = ({
                         <MenuItem 
                             onClick={() => {
                                 handleCloseMenu();
-                                console.log("member payment:", menuInfo.memberPayment, "\nmember:", menuInfo.member)
                                 setIconGreen(payment.id, menuInfo.memberId);
                             }}
                         >

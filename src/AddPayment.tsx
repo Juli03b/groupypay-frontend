@@ -85,7 +85,6 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
   const getAndSetTotalMemberPayment = () => {
     // Sums all member payments and sets totalMemberPayment to the sum
     const memberPayments: number[] = Object.values(formik.values.payInput);
-    console.log("MEMPAYMS", memberPayments)
     const addedPayments = memberPayments.reduce((prevPayment: number, currentPayment: number) => {
       return prevPayment + currentPayment;
     }, 0);

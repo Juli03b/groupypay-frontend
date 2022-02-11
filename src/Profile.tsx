@@ -42,7 +42,6 @@ const Profile = () => {
                 marginY={"5vh"}
                 spacing={2}
             >
-                {console.log(user)}
                 <Grid item xs={6} xl={4}>
                     <Typography variant="h3" textAlign={"center"}>{user.name}</Typography>
                 </Grid>

@@ -49,7 +49,6 @@ export default class GroupypayApi {
   static async patchUser(email: string, user: UserPatchProps) {
 
     const response: any = await this.request(`/users/${email}`, user, "POST");
-    console.log("data from patchUser", response.data)
     return response.data
   }
   static async getUser(email: string) {
@@ -60,7 +59,6 @@ export default class GroupypayApi {
   static async searchUsers(name: string) {
     // Search for users
     const response = await this.request(`/users/`, {name});
-    console.log("data from getUser", response)
     return response
   }
 
