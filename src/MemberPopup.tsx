@@ -62,6 +62,7 @@ const MemberPopup: FC<{
 }) => {
     const [memberPayments, setMemberPayments] = useState<MemberPaymentProps[]>(member.payments);
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [menuInfo, setMenuInfo] = useState<undefined | any>();
     const open = Boolean(anchorEl);
 
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -70,13 +71,17 @@ const MemberPopup: FC<{
     const handleCloseMenu = () => {
         setAnchorEl(null);
     };
-    const setIconGreen = (paymentId: number, memberId: number, idx: number) => {
+    const setIconGreen = (paymentId: number, memberId: number) => {
         payPayment(paymentId, memberId, () => {
             setMemberPayments((payments: any) => {
-                payments[idx].paid = true
+                payments.forEach((payment: MemberPaymentProps) => {
+                    if (payment.member_id == memberId) {
+                        payment.paid = true;
+                    }
+                });
                 return [...payments]
-            })
-        })
+            });
+        });
     }
     return (
         <BootstrapDialog
@@ -115,9 +120,46 @@ const MemberPopup: FC<{
                     </Typography>
                 </Box>
 
+                { menuInfo && (
+                    <Menu
+                        id={`menu-${menuInfo.memberId}`}
+                        anchorEl={anchorEl}
+                        open={open} 
+                        onClose={handleCloseMenu}
+                        MenuListProps={{
+                            'aria-labelledby': `paid-button-${menuInfo.memberId}`,
+                        }}
+                    >
+                        <MenuItem 
+                            onClick={() => {
+                                handleCloseMenu();
+                                setIconGreen(menuInfo.payment.id, menuInfo.memberId);
+                            }}
+                        >
+                            <Typography variant="subtitle2">
+                                Mark paid
+                            </Typography>
+                        </MenuItem>
+                        <MenuItem
+                            onClick={() => {
+                                handleCloseMenu();
+                                openPayPal(menuInfo.payment, menuInfo.memberPayment, menuInfo.members.memberId, menuInfo.member, () => {
+                                    setIconGreen(menuInfo.payment.id, menuInfo.memberId);
+                                });
+                            }}        
+                        >
+                            <Typography variant="subtitle2">
+                                Pay with
+                            </Typography>
+                            <span className="material-icons">paypal</span>
+                        </MenuItem>
+                    </Menu>
+                )}
+
+
                 {/* Member Payments */}
                 <Box>
-                    {memberPayments.map((memberPayment: any, idx: number) => {
+                    {memberPayments.map((memberPayment: MemberPaymentProps, idx: number) => {
                         return (
                             <Card 
                                 key={(memberPayment.member_id / idx)} 
@@ -131,37 +173,26 @@ const MemberPopup: FC<{
                                         </Typography>
                                     </Stack>
                                     <IconButton 
-                                        onClick={!memberPayment.paid ? handleClick : () => ""} 
+                                        { ...( !memberPayment.paid && {
+                                                onClick: (event: any) => {
+                                                    console.log("clicked", event)
+                                                    setMenuInfo({member, memberId: member.id, memberPayment, payment: memberPayment.group_payment});
+                                                    handleClick(event);
+                                                }
+                                            })
+                                        }
                                         id={`paid-button-${memberPayment.member_id / idx}`} 
                                         sx={{
-                                            display: "flex-root"
+                                            justifySelf: "self-start"
                                         }}
+                                        aria-haspopup="true"
+                                        aria-expanded={open ? 'true' : undefined}
                                     >
                                         <PaidIcon 
                                             sx={{color: memberPayment.paid ? "green" : "red"}} 
                                         />
                                     </IconButton>
-                                    <Menu
-                                        id={`menu-${memberPayment.member_id}`}
-                                        anchorEl={anchorEl}
-                                        open={open}
-                                        onClose={handleCloseMenu}
-                                        MenuListProps={{
-                                            'aria-labelledby': `paid-button-${memberPayment.member_id}`,
-                                        }}
-                                    >
-                                        <MenuItem onClick={() => (handleCloseMenu(), setIconGreen(memberPayment.group_payment_id, memberPayment.member_id, idx))}>
-                                            <Typography variant="subtitle2">
-                                                Mark paid
-                                            </Typography>
-                                        </MenuItem>
-                                        <MenuItem onClick={() => (handleCloseMenu(), openPayPal(memberPayment.member_id, memberPayment, member, () => setIconGreen(memberPayment.id, memberPayment.member_id, idx)))}>
-                                            <Typography variant="subtitle2">
-                                                Pay with
-                                            </Typography>
-                                            <span className="material-icons">paypal</span>
-                                        </MenuItem>
-                                    </Menu>
+                                    
                                 </Box>
                                 <Divider />
                             </Card>
