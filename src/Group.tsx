@@ -38,7 +38,7 @@ const Group = () => {
     const [paymentOpen, setPaymentOpen] = useState<GroupPaymentProps | undefined>(undefined);
     const [memberOpen, setMemberOpen] = useState<any | undefined>(undefined);
     const [payPal, setPaypal] = useState<undefined | {payment: any, memberPayee: any, memberPaying: any, memberPayment: any, setIconGreen: any}>(undefined);
-    const [secretCode, setSecretCode] = useState<undefined | null | string>(user?.email === email ? null : undefined); // undefined = not set yet | null = no password | string = password 
+    const [secretCode, setSecretCode] = useState<undefined | null | string>(); // undefined = not set yet | null = no password | string = password 
 
     const handleMemberSubmit = async (memberFromForm: MemberProps) => {
         if (!groupId || !email) return;
@@ -71,6 +71,7 @@ const Group = () => {
     });
 
     useEffect(() => {
+        setSecretCode(user?.email === email ? null : undefined)
         if (!groupId || !email || secretCode === undefined) return;
 
         const groupRes = async () => {
