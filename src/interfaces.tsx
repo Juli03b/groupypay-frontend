@@ -17,8 +17,9 @@ export interface UserPatchProps {
 export interface UserTokenProps {
     name: string,
     email: string,
-    groups?: GroupProps[],
     phoneNumber?: string,
+    groups?: GroupProps[],
+    owed_payments?: MemberPaymentProps[]
 }
 export interface MemberProps {
     [id: number | string] : {
@@ -36,8 +37,8 @@ export interface GroupPaymentProps {
     total_amount: string,
     member_payments?: MemberPaymentProps[],
     member_id: number,
-    created_on: string
-
+    created_on: string,
+    group_id: number
 }
 // member_id -> member payment amount
 export interface MemberPaymentProps {
@@ -45,7 +46,7 @@ export interface MemberPaymentProps {
     amount: number,
     paid: boolean,
     group_payment: GroupPaymentProps,
-    
+    member: MemberProps
 }
 
 export interface GroupProps {
@@ -53,7 +54,8 @@ export interface GroupProps {
     name: string,
     description: string,
     members: MemberProps,
-    payments: GroupPaymentProps[]
+    payments: GroupPaymentProps[],
+    user: UserTokenProps
 }
 export interface GroupCreateProps {
     name: string,
