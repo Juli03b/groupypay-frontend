@@ -13,7 +13,12 @@ const validationSchema = yup.object({
     .required('Name is required'),
   description: yup
     .string()
-    .max(200, "Description should be 200 characters or less"),
+    .max(200, "Description should be 200 characters or less")
+    .min(1,'Name should be at least on characer'),
+  secret_code: yup
+    .string()
+    .max(100, "Description should be 100 characters or less")
+    .min(1,"Secret should be at least one character")
 });
 
 
@@ -24,6 +29,7 @@ const MakeGroup: any = ({handleClose, open, addGroup}: {handleClose: any, open: 
     initialValues: {
       name: "",
       description: "",
+      secret_code: "",
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -70,6 +76,19 @@ const MakeGroup: any = ({handleClose, open, addGroup}: {handleClose: any, open: 
                     onChange={formik.handleChange}
                     error={formik.touched.description && Boolean(formik.errors.description)}
                     helperText={formik.touched.description && formik.errors.description}
+                    fullWidth
+                />
+                <TextField
+                    margin="dense"
+                    id="secret_code"
+                    name="secret_code"
+                    label="Secret code"
+                    type="text"
+                    variant="outlined"
+                    value={formik.values.secret_code}
+                    onChange={formik.handleChange}
+                    error={formik.touched.secret_code && Boolean(formik.errors.secret_code)}
+                    helperText={formik.touched.secret_code && formik.errors.secret_code}
                     fullWidth
                 />
             <DialogActions>
