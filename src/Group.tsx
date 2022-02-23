@@ -1,5 +1,5 @@
 import { Add, ConstructionOutlined } from "@mui/icons-material";
-import { Backdrop, CircularProgress, Container, IconButton, Typography } from "@mui/material";
+import { Backdrop, Card, CardActionArea, CircularProgress, Container, Divider, IconButton, Input, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -16,10 +16,19 @@ import Loading from "./Loading";
 import MemberPopup from "./MemberPopup";
 import AppContext from "./AppContext";
 import NotFound from "./NotFound";
+import * as yup from "yup";
+import { useFormik } from "formik";
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import MemberCard from "./MemberCard";
+import GroupPaymentCard from "./GroupPaymentCard";
+
+const secretCode = yup.string().max(100, "Secret code can be no longer than 100 characters");
+const secretCodeValidationSchema = yup.object({ secretCode });
 
 const Group = () => {
     const alert = useAlert();
     const { email, groupId } = useParams();
+    const { user } = useContext(AppContext);
     const [loading, setLoading] = useState(false);
     const [group, setGroup] = useState<GroupProps | undefined>();
     const [members, setMembers] = useState<MemberProps>({});
@@ -29,6 +38,7 @@ const Group = () => {
     const [paymentOpen, setPaymentOpen] = useState<GroupPaymentProps | undefined>(undefined);
     const [memberOpen, setMemberOpen] = useState<any | undefined>(undefined);
     const [payPal, setPaypal] = useState<undefined | {payment: any, memberPayee: any, memberPaying: any, memberPayment: any, setIconGreen: any}>(undefined);
+    const [secretCode, setSecretCode] = useState<undefined | null | string>(user?.email === email ? null : undefined); // undefined = not set yet | null = no password | string = password 
 
     const handleMemberSubmit = async (memberFromForm: MemberProps) => {
         if (!groupId || !email) return;
@@ -36,7 +46,6 @@ const Group = () => {
 
         setMembers((members) => ({...members, [member.id]: member}));
     }
-
     const handlePaymentSubmit = async (paymentFromForm: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) => {
         if (!groupId || !email) return;
         try {
@@ -47,26 +56,37 @@ const Group = () => {
             alert(error, "error")
           }
     }
-
     const payPayment = async (groupPaymentId: number, memberId: number, setMemberPayments: any) => {
         if (!email) return;
         const message = await GroupypayApi.payPayment(email, groupId, groupPaymentId, memberId);
-        alert(message + " " +memberId, "success");
+        alert(message + " " + memberId, "success");
         setMemberPayments();
     }
+    const formik = useFormik({
+        initialValues: {secretCode: ""},
+        validationSchema: secretCodeValidationSchema,
+        onSubmit: async ({secretCode}: {secretCode: string}) => {
+            setSecretCode(!secretCode || !secretCode.length ? null : secretCode);
+        }
+    });
 
     useEffect(() => {
-        if (!groupId || !email) return;
+        if (!groupId || !email || secretCode === undefined) return;
+
         const groupRes = async () => {
             setLoading(true);
             try {
-                const group: GroupProps = await GroupypayApi.getGroup(email, groupId);
-
-                setMembers(group.members)
+                const group: GroupProps = await GroupypayApi.getGroup(email, groupId, secretCode);
+                console.log("group", group)
+                setMembers(group.members);
                 setPayments(group.payments)
                 setGroup(group);
-            } catch (error) {
-                
+            } catch (error: any) {
+                if (Array.isArray(error)){
+                    [error] = error;
+                    alert(error, "error");
+                    setSecretCode(undefined)
+                }
             } finally {
                 setLoading(false);
             }
@@ -74,7 +94,31 @@ const Group = () => {
         }
         groupRes()
 
-    }, [groupId])
+    }, [groupId, secretCode, user, email]);
+    console.log("SECRET CODE:", secretCode)
+    if (secretCode === undefined) {
+        return (
+            <form onSubmit={formik.handleSubmit}>
+                <TextField
+                    error={formik.touched.secretCode && !!formik.errors.secretCode}
+                    value={formik.values.secretCode}
+                    helperText={formik.touched.secretCode && formik.errors.secretCode}
+                    onChange={formik.handleChange}
+                    id="secretCode"
+                    name="secretCode"
+                    label="Secret code"
+                    type="text"
+                    variant="filled"
+                    InputProps={{endAdornment: <ArrowForwardIosIcon />}}
+                    sx={{
+                        marginTop: "35vh"
+                    }}
+                    fullWidth
+                    autoFocus
+                />
+            </form>
+        );
+    }
     if (loading) return <Loading /> ;
     return (
         group ? (
@@ -97,20 +141,19 @@ const Group = () => {
                         }, 0)}
                     </Typography>
                 </Box>
-                <hr />
                 {/* Payments */}
                 {
                     (members && !!(Object.keys(members).length)) && (
                         <Box sx={{marginY: "2.5vh"}}>
-                            <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Add expense</Typography>
+                            <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Payments</Typography>
                             <IconButton aria-label="add-member" onClick={() => setAddPayment(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
+                            <Divider variant="middle" sx={{marginBottom:"1.5vh"}} />
                             {!!payPal && (
                                 <PayPal 
                                     open={!!payPal} 
                                     handleClose={() => setPaypal(undefined)}
                                     groupPayment={payPal.payment}
                                     memberPayment={payPal.memberPayment}
-                                    memberPayer={payPal.memberPaying}
                                     memberPayee={payPal.memberPayee} 
                                     setIconGreen={payPal.setIconGreen}
                                 />
@@ -134,16 +177,32 @@ const Group = () => {
                                     }}
                                 />
                             )}
-                            <PaymentsTable payments={payments} onClick={(groupPayment: GroupPaymentProps) => {
-                                setPaymentOpen(groupPayment)
+                            {
+                                payments.map(payment => (
+                                    <GroupPaymentCard
+                                        payment={payment}
+                                        onClick={(groupPayment: GroupPaymentProps) => setPaymentOpen(groupPayment)} />)
+                                ).concat([(
+                                    <Card sx={{height: 168, minWidth: 150, display: "inline-block", marginX: ".5vw"}}>
+                                        <CardActionArea sx={{height: "100%"}} onClick={() => setAddPayment(true)}>
+                                            <Add sx={{
+                                                position: "absolute",
+                                                left: "55px",
+                                                bottom: "65px"
+                                            }} />
+        
+                                        </CardActionArea>
+                                    </Card>
+                                )])
                             }
-                            }/>
+                            
                         </Box>
                 )}
                 {/* Members */}
                 <Box>
                     <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Members</Typography>
                     <IconButton aria-label="add-member" onClick={() => setAddMember(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
+                    <Divider variant="middle" sx={{marginBottom:"1.5vh"}} />
                     {memberOpen && (
                         <MemberPopup 
                             handleClose={() => setMemberOpen(undefined)}
@@ -155,11 +214,24 @@ const Group = () => {
                         />
                     )}
                     {addMember && <AddMember handleClose={() => setAddMember(false)} open={addMember} addMember={handleMemberSubmit} />}
-                    {(members && !!Object.keys(members).length) && (
-                        <MembersTable members={members} onClick={(member: MemberProps) => {
-                            setMemberOpen(member)
-                        }} /> 
-                    )}
+                    {
+                        Object.values(members).map((member) => {
+                            return <MemberCard member={member} key={member.id} onClick={(member: MemberProps) => {
+                                setMemberOpen(member)
+                            }}  />
+                        }).concat([(
+                            <Card sx={{height: 286, minWidth: 150, display: "inline-block", marginX: ".5vw"}}>
+                                <CardActionArea sx={{height: "100%"}} onClick={() => setAddMember(true)}>
+                                    <Add sx={{
+                                        position: "absolute",
+                                        left: "55px",
+                                        bottom: "120px"
+                                    }} />
+
+                                </CardActionArea>
+                            </Card>
+                        )])
+                    }
                 </Box>
             </Container>
             </>
