@@ -9,6 +9,8 @@ import { GroupPaymentProps, MemberPaymentProps, MemberProps } from './interfaces
 import { Box, Card, Chip, Divider, Icon, Menu, MenuItem, Stack, Switch } from '@mui/material';
 import dateFormat, { masks } from "dateformat";
 import PaidIcon from '@mui/icons-material/Paid';
+import MemberPaymentCard from "./MemberPaymentCard";
+import MemberPaymentCardList from "./MemberPaymentCardList";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -159,45 +161,45 @@ const MemberPopup: FC<{
 
                 {/* Member Payments */}
                 <Box>
-                    {memberPayments.map((memberPayment: MemberPaymentProps, idx: number) => {
-                        return (
-                            <Card 
-                                key={(memberPayment.member_id / idx)} 
-                                sx={{my: "1vh"}} 
-                            >
-                                <Box sx={{ p: 2, display: 'flex'}}>
-                                    <Stack spacing={0.5}>
-                                        <Typography fontWeight={500} variant="body1">{memberPayment.group_payment.name}</Typography>
-                                        <Typography variant="body2" color="text.secondary">
-                                            ${memberPayment.amount}
-                                        </Typography>
-                                    </Stack>
-                                    <IconButton 
-                                        { ...( !memberPayment.paid && {
-                                                onClick: (event: any) => {
-                                                    console.log("clicked", event)
-                                                    setMenuInfo({member, memberId: member.id, memberPayment, payment: memberPayment.group_payment});
-                                                    handleClick(event);
-                                                }
-                                            })
-                                        }
-                                        id={`paid-button-${memberPayment.member_id / idx}`} 
-                                        sx={{
-                                            justifySelf: "self-start"
-                                        }}
-                                        aria-haspopup="true"
-                                        aria-expanded={open ? 'true' : undefined}
-                                    >
-                                        <PaidIcon 
-                                            sx={{color: memberPayment.paid ? "green" : "red"}} 
-                                        />
-                                    </IconButton>
+                    {(
+                        <MemberPaymentCardList memberPaymentsProp={memberPayments} />
+                    )}
+                    
+                            {/* // <Card 
+                            //     key={(memberPayment.member_id / idx)} 
+                            //     sx={{my: "1vh"}} 
+                            // >
+                            //     <Box sx={{ p: 2, display: 'flex'}}>
+                            //         <Stack spacing={0.5}>
+                            //             <Typography fontWeight={500} variant="body1">{memberPayment.group_payment.name}</Typography>
+                            //             <Typography variant="body2" color="text.secondary">
+                            //                 ${memberPayment.amount}
+                            //             </Typography>
+                            //         </Stack>
+                            //         <IconButton 
+                            //             { ...( !memberPayment.paid && {
+                            //                     onClick: (event: any) => {
+                            //                         console.log("clicked", event)
+                            //                         setMenuInfo({member, memberId: member.id, memberPayment, payment: memberPayment.group_payment});
+                            //                         handleClick(event);
+                            //                     }
+                            //                 })
+                            //             }
+                            //             id={`paid-button-${memberPayment.member_id / idx}`} 
+                            //             sx={{
+                            //                 justifySelf: "self-start"
+                            //             }}
+                            //             aria-haspopup="true"
+                            //             aria-expanded={open ? 'true' : undefined}
+                            //         >
+                            //             <PaidIcon 
+                            //                 sx={{color: memberPayment.paid ? "green" : "red"}} 
+                            //             />
+                            //         </IconButton>
                                     
-                                </Box>
-                                <Divider />
-                            </Card>
-                        );
-                    })}
+                            //     </Box>
+                            //     <Divider />
+                            // </Card> */}
                 </Box>
             </DialogContent>
 
