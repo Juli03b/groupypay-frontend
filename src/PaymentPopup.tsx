@@ -113,7 +113,6 @@ const PaymentPopup = ({
 
                     <Typography variant="subtitle2" sx={{fontSize: "1.5em"}}>
                         ${payment.total_amount}
-                        
                     </Typography>
                 </Box>
                 <Box my={2}>
