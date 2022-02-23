@@ -48,7 +48,6 @@ const Dashboard: FC = () => {
                 <Box mb="2.5vh">
                     {makeGroup && <MakeGroup handleClose={closeMakeGroup} open={makeGroup} addGroup={(group: GroupProps) => setGroups(groups => [...groups, group])} />}
                     <Typography variant="h6" sx={{display: "inline", fontSize: "2em"}} gutterBottom>Groups</Typography>
-                    {/* <Paper style={{maxHeight: 500, overflow: "auto"}}> */}
                         <Box sx={{marginY: "1vh"}}>
                             {
                                 groups.map((group: GroupProps) => {
@@ -67,7 +66,6 @@ const Dashboard: FC = () => {
                                 )])
                             }
                         </Box>
-                    {/* </Paper> */}
                 </Box>
                 {   
                     (user.owed_payments && user.owed_payments.length >= 1) && (
