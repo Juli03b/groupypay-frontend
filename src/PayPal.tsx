@@ -14,7 +14,6 @@ const PayPal = ({
         handleClose,
         groupPayment,
         memberPayment,
-        memberPayer,
         memberPayee,
         setIconGreen
     }: {
@@ -22,7 +21,6 @@ const PayPal = ({
         handleClose: any, 
         groupPayment: GroupPaymentProps, 
         memberPayment: MemberPaymentProps, 
-        memberPayer: MemberProps[any], 
         memberPayee: MemberProps[any], 
         setIconGreen: any
     }) => {
