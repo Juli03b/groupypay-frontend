@@ -23,10 +23,8 @@ export default class GroupypayApi {
     console.debug("API Call:", endpoint, data, method);
 
     const url = `${BASE_URL}${endpoint}`;
-    const headers: AxiosRequestHeaders = { Authorization: `Bearer ${this.token}`};
-    const params = (method === "get")
-        ? data
-        : {};
+    const headers: AxiosRequestHeaders | undefined = this.token ? { Authorization: `Bearer ${this.token}`} : undefined;
+    const params = (method === "get") ? data : {};
 
     try {
       return (await axios({ url, method, data, params, headers })).data;
@@ -75,9 +73,9 @@ export default class GroupypayApi {
     const response = await this.request(`/users/${email}/groups`, group, "POST");
     return response
   }
-  static async getGroup(email: string, id: string) {
+  static async getGroup(email: string, id: string, secretCode: string | null) {
     // Get a group using an id
-    const response = await this.request(`/users/${email}/groups/${id}`);
+    const response = await this.request(`/users/${email}/groups/${id}`, {secret_code: secretCode});
     return response
   }
   static async addMember(userEmail: string, groupId: string, {name, email, phone_number}: MemberProps) {
