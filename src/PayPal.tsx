@@ -29,7 +29,7 @@ const PayPal = ({
 
         return (
             <Dialog open={open} onClose={handleClose}>
-            <DialogTitle>Pay {memberPayee.name}</DialogTitle>
+            <DialogTitle>Pay {groupPayment.member.name}</DialogTitle>
             <DialogContent>
                 <DialogContentText>
                     <PayPalScriptProvider options={initialOptions}>
