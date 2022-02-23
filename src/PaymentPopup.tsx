@@ -67,9 +67,11 @@ const PaymentPopup = ({
 }) => {
     const [memberPayments, setMemberPayments] = React.useState<MemberPaymentProps[]>(payment?.member_payments || []);
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [menuInfo, setMenuInfo] = React.useState<undefined | any>();
+    const [menuInfo, setMenuInfo] = React.useState<{
+        memberPaying: MemberProps[any], 
+        memberPayment: MemberPaymentProps
+    } | undefined> ();
     const open = Boolean(anchorEl);
-
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
         setAnchorEl(event.currentTarget);
     };
@@ -136,18 +138,18 @@ const PaymentPopup = ({
 
                 { menuInfo && (
                     <Menu
-                        id={`menu-${menuInfo.memberId}`}
+                        id={`menu-${menuInfo.memberPaying.id}`}
                         anchorEl={anchorEl}
                         open={open} 
                         onClose={handleCloseMenu}
                         MenuListProps={{
-                            'aria-labelledby': `paid-button-${menuInfo.memberId}`,
+                            'aria-labelledby': `paid-button-${menuInfo.memberPaying.id}`,
                         }}
                     >
                         <MenuItem 
                             onClick={() => {
                                 handleCloseMenu();
-                                setIconGreen(payment.id, menuInfo.memberId);
+                                setIconGreen(payment.id, menuInfo.memberPaying.id);
                             }}
                         >
                             <Typography variant="subtitle2">
@@ -157,8 +159,8 @@ const PaymentPopup = ({
                         <MenuItem
                             onClick={() => {
                                 handleCloseMenu();
-                                openPayPal(payment, menuInfo.memberPayment, members.memberId, menuInfo.member, () => {
-                                    setIconGreen(payment.id, menuInfo.memberId);
+                                openPayPal(payment, menuInfo.memberPayment, menuInfo.memberPaying, () => {
+                                    setIconGreen(payment.id, menuInfo.memberPaying.id);
                                 });
                             }}        
                         >
@@ -191,7 +193,7 @@ const PaymentPopup = ({
                                         <Button 
                                             { ...( !memberPayment.paid && {
                                                     onClick: (event: any) => {
-                                                        setMenuInfo({member, memberId, memberPayment});
+                                                        setMenuInfo({memberPaying: member, memberPayment});
                                                         handleClick(event);
                                                     }
                                                 })
