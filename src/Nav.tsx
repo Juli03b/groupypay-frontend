@@ -12,7 +12,7 @@ const Navigation: FC = () => {
         <Navbar bg="transparent" expand="lg" variant={undefined}>
             <Container>
             <Navbar.Brand href="/">
-                <Typography>
+                <Typography variant="subtitle2">
                     groupypay
                 </Typography>
             </Navbar.Brand>
