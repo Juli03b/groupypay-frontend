@@ -78,7 +78,7 @@ const Group = () => {
             setLoading(true);
             try {
                 const group: GroupProps = await GroupypayApi.getGroup(email, groupId, secretCode);
-                console.log("group", group)
+
                 setMembers(group.members);
                 setPayments(group.payments)
                 setGroup(group);
@@ -96,7 +96,7 @@ const Group = () => {
         groupRes()
 
     }, [groupId, secretCode, user, email]);
-    console.log("SECRET CODE:", secretCode)
+
     if (secretCode === undefined) {
         return (
             <form onSubmit={formik.handleSubmit}>
@@ -173,8 +173,8 @@ const Group = () => {
                                     payPayment={payPayment}
                                     payment={paymentOpen}
                                     members={members}
-                                    openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, memberPayee: any, memberPaying: any, setIconGreen: any) => {
-                                        setPaypal({payment, memberPayee, memberPaying, memberPayment , setIconGreen});
+                                    openPayPal={(payment: GroupPaymentProps, memberPayment: MemberPaymentProps, memberPaying: any, setIconGreen: any) => {
+                                        setPaypal({payment, memberPayee: payment.member, memberPaying, memberPayment , setIconGreen});
                                     }}
                                 />
                             )}
@@ -182,9 +182,12 @@ const Group = () => {
                                 payments.map(payment => (
                                     <GroupPaymentCard
                                         payment={payment}
-                                        onClick={(groupPayment: GroupPaymentProps) => setPaymentOpen(groupPayment)} />)
+                                        onClick={(groupPayment: GroupPaymentProps) => setPaymentOpen(groupPayment)}
+                                        key={payment.id} 
+                                    />
+                                )
                                 ).concat([(
-                                    <Card sx={{height: 168, minWidth: 150, display: "inline-block", marginX: ".5vw"}}>
+                                    <Card sx={{height: 168, minWidth: 150, display: "inline-block", marginX: ".5vw"}} key="add-payment-card">
                                         <CardActionArea sx={{height: "100%"}} onClick={() => setAddPayment(true)}>
                                             <Add sx={{
                                                 position: "absolute",
@@ -221,7 +224,7 @@ const Group = () => {
                                 setMemberOpen(member)
                             }}  />
                         }).concat([(
-                            <Card sx={{height: 286, minWidth: 150, display: "inline-block", marginX: ".5vw"}}>
+                            <Card sx={{height: 286, minWidth: 150, display: "inline-block", marginX: ".5vw"}} key="add-member-card">
                                 <CardActionArea sx={{height: "100%"}} onClick={() => setAddMember(true)}>
                                     <Add sx={{
                                         position: "absolute",
