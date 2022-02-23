@@ -36,7 +36,7 @@ const Router: FC = () => {
 
         })}
         {user && <Route path="/users/:email/groups/:groupId/payments/:paymentId" element={<GroupPayment />} />}        
-        {user && <Route path="/users/:email/groups/:groupId" element={<Group />} />}
+        {<Route path="/users/:email/groups/:groupId" element={<Group />} />}
         {!user && <Route path="/" element={<Home/>} />} // Signed in are redirected to /dashboard
         {user && <Route path="/" element={<Navigate replace to={"/dashboard"}/>} />} // Signed in are redirected to /dashboard
         
