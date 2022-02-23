@@ -38,7 +38,8 @@ export interface GroupPaymentProps {
     member_payments?: MemberPaymentProps[],
     member_id: number,
     created_on: string,
-    group_id: number
+    group_id: number,
+    member: MemberProps[any]
 }
 // member_id -> member payment amount
 export interface MemberPaymentProps {
@@ -46,7 +47,7 @@ export interface MemberPaymentProps {
     amount: number,
     paid: boolean,
     group_payment: GroupPaymentProps,
-    member: MemberProps
+    member: MemberProps[any]
 }
 
 export interface GroupProps {
