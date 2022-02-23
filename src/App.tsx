@@ -27,11 +27,12 @@ const customStyle = createTheme({
     },
   },
   typography: {
-    fontSize: 18,
+    fontSize: 25,
     caption: {
       fontSize: 17
     }
   },
+  
 });
 const useStyles = makeStyles({
   warning: {
@@ -50,10 +51,13 @@ const App: FC = () => {
 
   useEffect(() => {
     setTokenState(GroupypayApi.token || undefined)
+    const getUser = async (email: string) => {
+      const userRes = await GroupypayApi.getUser(email)
+      setUser(userRes);
+    }
     if (token) {
       const {sub}: {sub: any} = jwtDecode(token)
-
-      setUser(sub);
+      getUser(sub.email)
     };
 
   }, [token]);
@@ -110,7 +114,7 @@ const App: FC = () => {
       const fullUser: UserTokenProps = {
         name: patchedUser.name,
         email: patchedUser.email,
-        phoneNumber: patchedUser.phoneNumber
+        phoneNumber: patchedUser.phoneNumber,
       }
       setUser(fullUser);
       setSuccess();
