@@ -8,7 +8,7 @@ const buttons = [<Button key="one">One</Button>, <Button key="two">two</Button>]
 const MemberPaymentCard: FC<{memberPayment: MemberPaymentProps, handleOpen: any, open: boolean}> = ({memberPayment, handleOpen, open}) => {
     return (
         <Card 
-            sx={{my: "1vh", paddingRight: "381px", width: "fit-content"}} 
+            sx={{my: "1vh", paddingRight: "381px"}} 
 
         >
             <Box sx={{ p: 2, display: 'flex'}}>
@@ -17,20 +17,7 @@ const MemberPaymentCard: FC<{memberPayment: MemberPaymentProps, handleOpen: any,
                     <Typography variant="body2" color="text.secondary">
                         ${memberPayment.amount}
                     </Typography>
-                </Stack>
-                {/* <Box
-                    sx={{
-                        justifyContent: "end"
-                    }}
-                    >
-                    <ButtonGroup
-                        orientation="vertical"
-                        aria-label="vertical outlined button group"
-                    >
-                        {buttons}
-                    </ButtonGroup>
-                </Box> */}
-                
+                </Stack>                
                 <Button 
                     {   ...( !memberPayment.paid && {
                             onClick: (event: any) => {
