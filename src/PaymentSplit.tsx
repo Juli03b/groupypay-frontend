@@ -53,8 +53,9 @@ const PaymentSplit = ({members, formValues, disabled, onChange}:{members: Member
                     }}
                     InputProps={{
                       inputProps:{
-                      min: 0,
-                      step: "any"
+                        min: 0,
+                        step: "any",
+                        
                     }}}
                     value={formValues[row.id]}
                     onChange={(values) => onChange(values, row.id)}
