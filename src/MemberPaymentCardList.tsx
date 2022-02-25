@@ -83,9 +83,6 @@ const MemberPaymentCardList: FC<{email?: string , memberPaymentsProp: MemberPaym
                             onClick={() => {
                                 handleCloseMenu();
                                 openPayPal(menuInfo.memberPayment.group_payment, menuInfo.memberPayment, menuInfo.group_payment.member, payPayment)
-                                // openPayPal(payment, menuInfo.memberPayment, members.memberId, menuInfo.member, () => {
-                                //     setIconGreen(payment.id, menuInfo.memberId);
-                                // });
                             }}        
                         >
                             <Typography variant="subtitle2">
@@ -98,7 +95,7 @@ const MemberPaymentCardList: FC<{email?: string , memberPaymentsProp: MemberPaym
             }   
             {   !!memberPaymentsProp && (
                     memberPaymentsProp.map((memberPayment) => {
-                        return <MemberPaymentCard memberPayment={memberPayment} handleOpen={handleOpen} open={open} />
+                        return <MemberPaymentCard key={memberPayment.member_id} memberPayment={memberPayment} handleOpen={handleOpen} open={open} />
                     })
                 )
             }
