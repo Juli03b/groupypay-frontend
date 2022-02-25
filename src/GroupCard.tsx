@@ -1,13 +1,9 @@
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { GroupProps } from './interfaces';
 import { FC } from 'react';
-import { makeStyles } from "@mui/styles";
-import { Avatar, Badge, CardActionArea, Chip, Divider, Link, Stack, Switch } from '@mui/material';
+import { CardActionArea, Chip, Divider, Link, Stack, Switch } from '@mui/material';
 import { Link as rrdLink } from 'react-router-dom';
 
 // Group card
@@ -22,7 +18,7 @@ const GroupCard: FC<{group: GroupProps, email: string}> = ({group, email}) => {
                             <Typography variant="subtitle2" color="text.secondary" sx={{fontSize: 15}}>
                                 Group
                             </Typography>
-                            <Divider />
+                            <Divider variant="fullWidth" sx={{ marginLeft: "-30px", marginRight: "-16px"}} />
                             <Typography fontWeight={700} sx={{fontSize: 30}}>{group.name}</Typography>
                             <Box>
                                 <Typography variant="subtitle2" color="text.secondary" sx={{fontSize: 10}}>
@@ -37,7 +33,13 @@ const GroupCard: FC<{group: GroupProps, email: string}> = ({group, email}) => {
                                 <Typography variant="subtitle2">{group.payments.length}</Typography>                            
                             </Box>
 
-                            <Chip variant="outlined" size="small" label={<Typography variant="subtitle2" fontSize={15}>{group.user.name}</Typography>} />
+                            <Chip
+                                label={<Typography variant="subtitle2" fontSize={15}>{group.user.name}</Typography>}
+                                component="a"
+                                href={`/profile/${group.user.email}`}
+                                variant="outlined"
+                                clickable
+                            />
                         </Stack>
                     </Box>
 
