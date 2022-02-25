@@ -36,7 +36,7 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
     },
     validationSchema: validationSchema,
     onSubmit: async ({name, total_amount, payInput, memberPaid}) => {
-      if (totalMemberPayment < parseFloat(formik.values.total_amount)) {
+      if (parseFloat(`${totalMemberPayment}`) < parseFloat(formik.values.total_amount)) {
         return;
       }
       try {
@@ -55,7 +55,7 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
     formik.handleChange(values); // Change total amount input value
 
     if (splitEqually) {
-      getAndSetEqualSplit(values.target.value); // Change input values to split value
+      getAndSetEqualSplit(values.target.value || 0); // Change input values to split value
     }
     getAndSetTotalMemberPayment();
   };
@@ -176,7 +176,7 @@ const AddPayment: any = ({handleClose, open, addPayment, members}: {handleClose:
                         const totalAmountFloat = parseFloat(formik.values.total_amount);
 
                         getAndSetEqualSplit(totalAmountFloat);
-                        setTotalMemberPayment(totalAmountFloat);
+                        setTotalMemberPayment(totalAmountFloat || 0);
 
                         validationSchema.fields.total_amount.min(totalMemberPayment);
                       }else{

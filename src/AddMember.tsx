@@ -1,10 +1,7 @@
-import { Dialog, DialogTitle, DialogContentText, DialogContent, TextField, DialogActions, Button } from "@mui/material";
-import { makeStyles } from "@mui/styles";
+import { Dialog, DialogTitle, DialogContentText, DialogContent, TextField, DialogActions, Button, Checkbox, FormControlLabel } from "@mui/material";
 import * as yup from "yup";
 import { useFormik } from 'formik';
 import { useAlert } from "./hooks";
-import { useContext } from "react";
-import AppContext from "./AppContext";
 
 const validationSchema = yup.object({
     name: yup
@@ -18,9 +15,11 @@ const validationSchema = yup.object({
     phone_number: yup
         .string()
         .min(10, "Number should be at least 10 characters")
-        .max(11, "Number should be at most 11 characters")                  
+        .max(11, "Number should be at most 11 characters"),
+    link_user: yup
+        .bool()
+        .optional()       
 });
-
 
 const AddMember: any = ({handleClose, open, addMember}: {handleClose: any, open: boolean, addMember: Function}) => {
   const alert = useAlert();
@@ -29,13 +28,13 @@ const AddMember: any = ({handleClose, open, addMember}: {handleClose: any, open:
       name: "",
       email: "",
       phone_number: "",
+      link_user: false,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
         await addMember(values);
         
-        alert("Member created", "success");
         handleClose();
       } catch (errors: any) {
         for (const error of errors) {
@@ -81,6 +80,14 @@ const AddMember: any = ({handleClose, open, addMember}: {handleClose: any, open:
                   helperText={formik.touched.email && formik.errors.email}
                   fullWidth
                   required
+              />
+              <FormControlLabel 
+                id="link-user-checkbox"
+                name="link_user"
+                control={<Checkbox />} 
+                value={formik.values.link_user} 
+                label="Link email with existing account?"
+                onChange={formik.handleChange}
               />
               <TextField
                   margin="dense"
