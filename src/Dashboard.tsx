@@ -3,6 +3,7 @@ import { Box, Card, CardActionArea, Container, Divider, IconButton, Paper, Tab, 
 import { makeStyles } from "@mui/styles";
 import React, { FC, useContext, useEffect, useState } from "react";
 import AppContext from "./AppContext";
+import CustomHeader from "./CustomHeader";
 import GroupCard from "./GroupCard";
 import GroupsTable from "./GroupsTable";
 import GroupypayApi from "./GroupypayApi";
@@ -47,7 +48,7 @@ const Dashboard: FC = () => {
             <Container sx={{marginY: "10vh"}}>
                 <Box mb="2.5vh">
                     {makeGroup && <MakeGroup handleClose={closeMakeGroup} open={makeGroup} addGroup={(group: GroupProps) => setGroups(groups => [...groups, group])} />}
-                    <Typography variant="h6" sx={{display: "inline", fontSize: "2em"}} gutterBottom>Groups</Typography>
+                    <CustomHeader text={"Groups"} />
                         <Box sx={{marginY: "1vh"}}>
                             {
                                 groups.map((group: GroupProps) => {
