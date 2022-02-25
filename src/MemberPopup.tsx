@@ -1,5 +1,5 @@
 import { Dialog, DialogTitle, IconButton, styled } from "@mui/material";
-import { FC, useState } from "react";
+import { FC, useContext, useState } from "react";
 import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
@@ -11,6 +11,7 @@ import dateFormat, { masks } from "dateformat";
 import PaidIcon from '@mui/icons-material/Paid';
 import MemberPaymentCard from "./MemberPaymentCard";
 import MemberPaymentCardList from "./MemberPaymentCardList";
+import AppContext from "./AppContext";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
     '& .MuiDialogContent-root': {
@@ -58,33 +59,11 @@ const MemberPopup: FC<{
     member: MemberProps[any]
 }> = ({
     handleClose,
-    payPayment,
-    openPayPal,
     member
 }) => {
-    const [memberPayments, setMemberPayments] = useState<MemberPaymentProps[]>(member.payments);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const [menuInfo, setMenuInfo] = useState<undefined | any>();
-    const open = Boolean(anchorEl);
+    const [memberPayments ] = useState<MemberPaymentProps[]>(member.payments);
+    const { user } = useContext(AppContext);
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
-    };
-    const setIconGreen = (paymentId: number, memberId: number) => {
-        payPayment(paymentId, memberId, () => {
-            setMemberPayments((payments: any) => {
-                payments.forEach((payment: MemberPaymentProps) => {
-                    if (payment.member_id == memberId) {
-                        payment.paid = true;
-                    }
-                });
-                return [...payments]
-            });
-        });
-    }
     return (
         <BootstrapDialog
             onClose={handleClose}
@@ -122,84 +101,9 @@ const MemberPopup: FC<{
                     </Typography>
                 </Box>
 
-                { menuInfo && (
-                    <Menu
-                        id={`menu-${menuInfo.memberId}`}
-                        anchorEl={anchorEl}
-                        open={open} 
-                        onClose={handleCloseMenu}
-                        MenuListProps={{
-                            'aria-labelledby': `paid-button-${menuInfo.memberId}`,
-                        }}
-                    >
-                        <MenuItem 
-                            onClick={() => {
-                                handleCloseMenu();
-                                setIconGreen(menuInfo.payment.id, menuInfo.memberId);
-                            }}
-                        >
-                            <Typography variant="subtitle2">
-                                Mark paid
-                            </Typography>
-                        </MenuItem>
-                        <MenuItem
-                            onClick={() => {
-                                handleCloseMenu();
-                                openPayPal(menuInfo.payment, menuInfo.memberPayment, menuInfo.members.memberId, menuInfo.member, () => {
-                                    setIconGreen(menuInfo.payment.id, menuInfo.memberId);
-                                });
-                            }}        
-                        >
-                            <Typography variant="subtitle2">
-                                Pay with
-                            </Typography>
-                            <span className="material-icons">paypal</span>
-                        </MenuItem>
-                    </Menu>
-                )}
-
-
                 {/* Member Payments */}
                 <Box>
-                    {(
-                        <MemberPaymentCardList memberPaymentsProp={memberPayments} />
-                    )}
-                    
-                            {/* // <Card 
-                            //     key={(memberPayment.member_id / idx)} 
-                            //     sx={{my: "1vh"}} 
-                            // >
-                            //     <Box sx={{ p: 2, display: 'flex'}}>
-                            //         <Stack spacing={0.5}>
-                            //             <Typography fontWeight={500} variant="body1">{memberPayment.group_payment.name}</Typography>
-                            //             <Typography variant="body2" color="text.secondary">
-                            //                 ${memberPayment.amount}
-                            //             </Typography>
-                            //         </Stack>
-                            //         <IconButton 
-                            //             { ...( !memberPayment.paid && {
-                            //                     onClick: (event: any) => {
-                            //                         console.log("clicked", event)
-                            //                         setMenuInfo({member, memberId: member.id, memberPayment, payment: memberPayment.group_payment});
-                            //                         handleClick(event);
-                            //                     }
-                            //                 })
-                            //             }
-                            //             id={`paid-button-${memberPayment.member_id / idx}`} 
-                            //             sx={{
-                            //                 justifySelf: "self-start"
-                            //             }}
-                            //             aria-haspopup="true"
-                            //             aria-expanded={open ? 'true' : undefined}
-                            //         >
-                            //             <PaidIcon 
-                            //                 sx={{color: memberPayment.paid ? "green" : "red"}} 
-                            //             />
-                            //         </IconButton>
-                                    
-                            //     </Box>
-                            //     <Divider />
-                            // </Card> */}
+                    <MemberPaymentCardList email={user && user.email} memberPaymentsProp={memberPayments} />
                 </Box>
             </DialogContent>
 
