@@ -1,5 +1,5 @@
-import { Add, ConstructionOutlined } from "@mui/icons-material";
-import { Backdrop, Card, CardActionArea, CircularProgress, Container, Divider, IconButton, Input, TextField, Typography } from "@mui/material";
+import { Add } from "@mui/icons-material";
+import { Card, CardActionArea, Container, Divider, IconButton, Input, TextField, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -7,8 +7,6 @@ import AddMember from "./AddMember";
 import AddPayment from "./AddPayment";
 import GroupypayApi from "./GroupypayApi";
 import { GroupPaymentProps, GroupProps, MemberPaymentProps, MemberProps } from "./interfaces";
-import MembersTable from "./MembersTable";
-import PaymentsTable from "./PaymentsTable";
 import { useAlert } from "./hooks";
 import PaymentPopup from "./PaymentPopup";
 import PayPal from "./PayPal";
@@ -21,6 +19,7 @@ import { useFormik } from "formik";
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import MemberCard from "./MemberCard";
 import GroupPaymentCard from "./GroupPaymentCard";
+import CustomHeader from "./CustomHeader";
 
 const secretCode = yup.string().max(100, "Secret code can be no longer than 100 characters");
 const secretCodeValidationSchema = yup.object({ secretCode });
@@ -42,8 +41,11 @@ const Group = () => {
 
     const handleMemberSubmit = async (memberFromForm: MemberProps) => {
         if (!groupId || !email) return;
-        const {member} = await GroupypayApi.addMember(email, groupId, memberFromForm);
-
+        console.log("MEMMEBR", memberFromForm)
+        const {member, warning} = await GroupypayApi.addMember(email, groupId, memberFromForm);
+        if (warning && warning.length){
+            alert(warning, "warning")
+        }
         setMembers((members) => ({...members, [member.id]: member}));
     }
     const handlePaymentSubmit = async (paymentFromForm: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) => {
@@ -146,9 +148,7 @@ const Group = () => {
                 {
                     (members && !!(Object.keys(members).length)) && (
                         <Box sx={{marginY: "2.5vh"}}>
-                            <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Payments</Typography>
-                            <IconButton aria-label="add-member" onClick={() => setAddPayment(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
-                            <Divider variant="middle" sx={{marginBottom:"1.5vh"}} />
+                            <CustomHeader text={"Payments"} />
                             {!!payPal && (
                                 <PayPal 
                                     open={!!payPal} 
@@ -204,9 +204,7 @@ const Group = () => {
                 )}
                 {/* Members */}
                 <Box>
-                    <Typography variant="h3" sx={{display: "inline"}} gutterBottom>Members</Typography>
-                    <IconButton aria-label="add-member" onClick={() => setAddMember(true)}><Add sx={{marginBottom: "16px"}}/></IconButton>
-                    <Divider variant="middle" sx={{marginBottom:"1.5vh"}} />
+                    <CustomHeader text={"Members"} />
                     {memberOpen && (
                         <MemberPopup 
                             handleClose={() => setMemberOpen(undefined)}
@@ -220,6 +218,7 @@ const Group = () => {
                     {addMember && <AddMember handleClose={() => setAddMember(false)} open={addMember} addMember={handleMemberSubmit} />}
                     {
                         Object.values(members).map((member) => {
+                            console.log("MEMBER:", member)
                             return <MemberCard member={member} key={member.id} onClick={(member: MemberProps) => {
                                 setMemberOpen(member)
                             }}  />
