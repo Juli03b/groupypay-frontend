@@ -78,8 +78,8 @@ export default class GroupypayApi {
     const response = await this.request(`/users/${email}/groups/${id}`, {secret_code: secretCode});
     return response
   }
-  static async addMember(userEmail: string, groupId: string, {name, email, phone_number}: MemberProps) {
-    const response = await this.request(`/users/${userEmail}/groups/${groupId}/members`, {name, email, ...{phone_number: phone_number || ""} }, "POST");
+  static async addMember(userEmail: string, groupId: string, {name, email, phone_number, link_user}: any) {
+    const response = await this.request(`/users/${userEmail}/groups/${groupId}/members`, {name, email, link_user,...{phone_number: phone_number || ""} }, "POST");
     return response
   }
   static async addPayment(email: string, groupId: string, {name, total_amount}: GroupPaymentProps, memberPayments: MemberPaymentProps[], memberPaid: number) {
